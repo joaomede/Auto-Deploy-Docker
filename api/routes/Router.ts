@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import cDeploy from '../controllers/Deploy'
 import cContainer from '../controllers/Container'
+import cDocker from '../controllers/Docker'
 import CheckJwt from '../middlewares/CheckJwt'
 const routes = Router()
 
@@ -24,6 +25,11 @@ routes.post(
 routes.delete(
   '/api/container/delete/:id',
   cContainer.destroy
+)
+
+routes.post(
+  '/api/deploy/webhook/:secret',
+  cDocker.deploy
 )
 
 export default routes

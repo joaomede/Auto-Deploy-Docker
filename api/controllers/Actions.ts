@@ -1,9 +1,35 @@
 import { Stream } from 'stream'
+import { ContainerCreateOptions, Container, ContainerInspectInfo, Image } from 'dockerode'
 import Dockerode = require('dockerode')
 
-export class DockerActions {
-  public containerObject (docker: Dockerode, imageName: string): Dockerode.Container {
-    return docker.getContainer(imageName)
+export class Actions {
+  public async noSuchContainer (actions: Actions, dockerode: Dockerode, containerName: string, imagemName: string): Promise<void> {
+    try {
+      console.log(containerName)
+      const image: Image = await actions.pullImage(dockerode, imagemName)
+      const imageInspected = await actions.inspectImage(image)
+      const database = this.configConstructor(containerName, imageInspected.RepoTags[0])
+      // const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
+      const containerDB = await actions.createNewContaier(dockerode, database)
+      await actions.startContainer(containerDB)
+    } catch (error) {
+      console.log('Error ao tentar implantar container')
+    }
+  }
+
+  public async hasContainer (actions: Actions, dockerode: Dockerode, containerName: string, imagemName: string, container: Container, infoContainer: ContainerInspectInfo): Promise<void> {
+    try {
+      await actions.stopAndRemoveContainer(container)
+      await actions.removeImage(dockerode, infoContainer.Image)
+      const image: Image = await actions.pullImage(dockerode, imagemName)
+      const imageInspected = await actions.inspectImage(image)
+      const database = this.configConstructor(containerName, imageInspected.RepoTags[0])
+      // const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
+      const containerDB = await actions.createNewContaier(dockerode, database)
+      await actions.startContainer(containerDB)
+    } catch (error) {
+      console.log('Error ao tentar implantar container')
+    }
   }
 
   public async startContainer (newContainer: Dockerode.Container): Promise<void> {
@@ -28,6 +54,10 @@ export class DockerActions {
       }
       return error.reason
     }
+  }
+
+  public containerObject (docker: Dockerode, containerName: string): Dockerode.Container {
+    return docker.getContainer(containerName)
   }
 
   public async inspectImage (image: Dockerode.Image): Promise<Dockerode.ImageInspectInfo> {
@@ -110,5 +140,30 @@ export class DockerActions {
         })
       })
     })
+  }
+
+  public configConstructor (containerName: string, imageName: string): ContainerCreateOptions {
+    return {
+      name: containerName,
+      Image: imageName,
+      HostConfig: {
+        Binds: [
+          '/home/{}/Documentos/projects/auto-deploy-test/postgres:/var/lib/postgresql/data',
+          '/etc/localtime:/etc/localtime:ro'
+        ]
+      },
+      Env: [
+        'POSTGRES_USER=admin',
+        'POSTGRES_PASSWORD=admin',
+        'POSTGRES_DB=banco'
+      ],
+      AttachStdin: false,
+      AttachStdout: true,
+      AttachStderr: true,
+      Tty: true,
+      // Cmd: ['postgres'],
+      OpenStdin: false,
+      StdinOnce: false
+    }
   }
 }

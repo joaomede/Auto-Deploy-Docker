@@ -1,84 +1,35 @@
-import { DockerActions } from './DockerActions'
-import { ContainerInspectInfo, ContainerCreateOptions, Container, Image } from 'dockerode'
+import { Actions } from './Actions'
+import { ContainerInspectInfo } from 'dockerode'
+import { NewRequest } from '../interface/NewRequest'
+import { Response } from 'express'
+// import * as I from '../interface/Interfaces'
+import resp from 'resp-express'
+import DeployQuery from '../query/deployQuery'
 import Dockerode = require('dockerode')
 
-class DeployContainer extends DockerActions {
-  private dockerode: Dockerode
-
-  constructor () {
-    super()
-    this.dockerode = new Dockerode({ socketPath: '/var/run/docker.sock' })
-  }
-
-  public async deploy (containerName: string): Promise<void> {
-    const container = this.containerObject(this.dockerode, containerName)
-    const imagemName = 'postgres:11.5-alpine'
+export default new class DeployContainer {
+  public async deploy (req: NewRequest, res: Response): Promise<void> {
+    const { secret } = req.params
+    const actions = new Actions()
     try {
-      const infoContainer = await this.inspectContainer(container)
+      const deploy = await DeployQuery.findDeploy(secret)
+      const containers = await DeployQuery.findContainers(deploy.id)
+      const dockerode = new Dockerode({ socketPath: '/var/run/docker.sock' })
+      const cfgSelected = containers[0].config as Dockerode.ContainerCreateOptions
+      const container = actions.containerObject(dockerode, cfgSelected.name)
+
+      const infoContainer = await actions.inspectContainer(container)
 
       if (infoContainer === 'no such container') {
-        await this.noSuchContainer(containerName, 'postgres:11.5-alpine')
+        await actions.noSuchContainer(actions, dockerode, cfgSelected.name, cfgSelected.Image)
+        resp.returnSucessMessage(res, 'Implantação concluida com sucesso')
       } else {
-        await this.hasContainer(containerName, imagemName, container, infoContainer as ContainerInspectInfo)
+        await actions.hasContainer(actions, dockerode, cfgSelected.name, cfgSelected.Image, container, infoContainer as ContainerInspectInfo)
+        resp.returnSucessMessage(res, 'Implantação concluida com sucesso')
       }
     } catch (error) {
+      resp.returnErrorMessage(res, error)
       console.log(error)
     }
   }
-
-  public async noSuchContainer (containerName: string, imagemName: string): Promise<void> {
-    try {
-      console.log(containerName)
-      const image: Image = await this.pullImage(this.dockerode, imagemName)
-      const imageInspected = await this.inspectImage(image)
-      const database = this.configConstructor(containerName, imageInspected.RepoTags[0])
-      // const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
-      const containerDB = await this.createNewContaier(this.dockerode, database)
-      await this.startContainer(containerDB)
-    } catch (error) {
-      console.log('Error ao tentar implantar container')
-    }
-  }
-
-  public async hasContainer (containerName: string, imagemName: string, container: Container, infoContainer: ContainerInspectInfo): Promise<void> {
-    try {
-      await this.stopAndRemoveContainer(container)
-      await this.removeImage(this.dockerode, infoContainer.Image)
-      const image: Image = await this.pullImage(this.dockerode, imagemName)
-      const imageInspected = await this.inspectImage(image)
-      const database = this.configConstructor(containerName, imageInspected.RepoTags[0])
-      // const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
-      const containerDB = await this.createNewContaier(this.dockerode, database)
-      await this.startContainer(containerDB)
-    } catch (error) {
-      console.log('Error ao tentar implantar container')
-    }
-  }
-
-  public configConstructor (containerName: string, imageName: string): ContainerCreateOptions {
-    return {
-      name: containerName,
-      Image: imageName,
-      HostConfig: {
-        Binds: [
-          '/home/{}/Documentos/projects/auto-deploy-test/postgres:/var/lib/postgresql/data',
-          '/etc/localtime:/etc/localtime:ro'
-        ]
-      },
-      Env: [
-        'POSTGRES_USER=admin',
-        'POSTGRES_PASSWORD=admin',
-        'POSTGRES_DB=banco'
-      ],
-      AttachStdin: false,
-      AttachStdout: true,
-      AttachStderr: true,
-      Tty: true,
-      // Cmd: ['postgres'],
-      OpenStdin: false,
-      StdinOnce: false
-    }
-  }
-}
-
-export default new DeployContainer()
+}()
