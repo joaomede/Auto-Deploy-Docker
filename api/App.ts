@@ -2,6 +2,7 @@
 import * as http from 'http'
 import * as https from 'https'
 import router from './routes/Router'
+import routerAuth from './routes/RouterAuth'
 import { env } from './config/env'
 // import history = require('connect-history-api-fallback')
 import express = require('express')
@@ -19,6 +20,7 @@ class App {
   }
 
   private routes (): void {
+    this.express.use(routerAuth)
     this.express.use(router)
   }
 
