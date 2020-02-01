@@ -11,6 +11,7 @@ export class DockerActions {
       await newContainer.start()
       console.log('7 - iniciou o novo container')
     } catch (error) {
+      console.log(error)
       console.log('7.e - Erro ao tentar iniciar o container')
       return error
     }
@@ -56,22 +57,13 @@ export class DockerActions {
     }
   }
 
-  public async createNewContaier (docker: Dockerode, imageName: string, containerName: string): Promise<Dockerode.Container> {
+  public async createNewContaier (docker: Dockerode, config: Dockerode.ContainerCreateOptions): Promise<Dockerode.Container> {
     try {
-      const newContainer = await docker.createContainer({
-        Image: imageName,
-        name: containerName,
-        AttachStdin: false,
-        AttachStdout: true,
-        AttachStderr: true,
-        Tty: true,
-        // Cmd: ['/bin/bash', '-c', 'tail -f /var/log/dmesg'],
-        OpenStdin: false,
-        StdinOnce: false
-      })
+      const newContainer = await docker.createContainer(config)
       console.log('6 - recriou o container')
       return newContainer
     } catch (error) {
+      console.log(error)
       console.log('6.e - erro ao tentar criar container')
     }
   }
