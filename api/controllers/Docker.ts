@@ -10,15 +10,15 @@ class DeployContainer extends DockerActions {
   }
 
   public async deploy (containerName: string): Promise<void> {
-    const container = this.containerObject(this.dockerode, 'testeteste')
-
+    const container = this.containerObject(this.dockerode, containerName)
+    const imagemName = 'postgres:11.5-alpine'
     try {
       const infoContainer = await this.inspectContainer(container)
 
       if (infoContainer === 'no such container') {
-        await this.noSuchContainer(containerName)
+        await this.noSuchContainer(containerName, 'postgres:11.5-alpine')
       } else {
-        await this.hasContainer(containerName, container, infoContainer as Dockerode.ContainerInspectInfo)
+        await this.hasContainer(containerName, imagemName, container, infoContainer as Dockerode.ContainerInspectInfo)
       }
     } catch (error) {
       console.log(error)
@@ -51,6 +51,31 @@ class DeployContainer extends DockerActions {
       await this.startContainer(containerDB)
     } catch (error) {
       console.log('Error ao tentar implantar container')
+    }
+  }
+
+  public configConstructor (containerName: string, imageName: string): Dockerode.ContainerCreateOptions {
+    return {
+      name: containerName,
+      Image: imageName,
+      HostConfig: {
+        Binds: [
+          '/home/{}/Documentos/projects/auto-deploy-test/postgres:/var/lib/postgresql/data',
+          '/etc/localtime:/etc/localtime:ro'
+        ]
+      },
+      Env: [
+        'POSTGRES_USER=admin',
+        'POSTGRES_PASSWORD=admin',
+        'POSTGRES_DB=banco'
+      ],
+      AttachStdin: false,
+      AttachStdout: true,
+      AttachStderr: true,
+      Tty: true,
+      // Cmd: ['postgres'],
+      OpenStdin: false,
+      StdinOnce: false
     }
   }
 }
