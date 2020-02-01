@@ -83,6 +83,7 @@ export class DockerActions {
     // let json
     // eslint-disable-next-line no-async-promise-executor
     return new Promise((resolve, reject) => {
+      console.log('4 - Iniciando download...')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       docker.pull(imageName, (pullError: any, stream: Stream) => {
         if (pullError) {
@@ -104,7 +105,7 @@ export class DockerActions {
           if (error) {
             reject(error)
           }
-          console.log('4 - Download da imagem concluído')
+          console.log('4.1 - Download da imagem concluído')
           resolve(docker.getImage(imageName))
         })
       })
