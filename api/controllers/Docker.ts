@@ -39,14 +39,16 @@ class DeployContainer extends DockerActions {
     }
   }
 
-  public async hasContainer (containerName: string, container: Dockerode.Container, infoContainer: Dockerode.ContainerInspectInfo): Promise<void> {
+  public async hasContainer (containerName: string, imagemName: string, container: Dockerode.Container, infoContainer: Dockerode.ContainerInspectInfo): Promise<void> {
     try {
       await this.stopAndRemoveContainer(container)
       await this.removeImage(this.dockerode, infoContainer.Image)
-      const image: Dockerode.Image = await this.pullImage(this.dockerode, 'alpine')
+      const image: Dockerode.Image = await this.pullImage(this.dockerode, imagemName)
       const imageInspected = await this.inspectImage(image)
-      const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
-      await this.startContainer(containerCriado)
+      const database = this.configConstructor(containerName, imageInspected.RepoTags[0])
+      // const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
+      const containerDB = await this.createNewContaier(this.dockerode, database)
+      await this.startContainer(containerDB)
     } catch (error) {
       console.log('Error ao tentar implantar container')
     }
