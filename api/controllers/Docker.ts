@@ -1,130 +1,51 @@
-import { Stream } from 'stream'
+import { DockerActions } from './DockerActions'
 import Dockerode = require('dockerode')
 
-class DeployContainer {
+class DeployContainer extends DockerActions {
   private dockerode: Dockerode
 
   constructor () {
+    super()
     this.dockerode = new Dockerode({ socketPath: '/var/run/docker.sock' })
   }
 
   public async deploy (containerName: string): Promise<void> {
-    const container = this.containerObject('testeteste')
+    const container = this.containerObject(this.dockerode, 'testeteste')
 
     try {
-      const infoContainer = await container.inspect()
+      const infoContainer = await this.inspectContainer(container)
 
+      if (infoContainer === 'no such container') {
+        await this.noSuchContainer(containerName)
+      } else {
+        await this.hasContainer(containerName, container, infoContainer as Dockerode.ContainerInspectInfo)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  public async noSuchContainer (containerName: string): Promise<void> {
+    try {
+      const image: Dockerode.Image = await this.pullImage(this.dockerode, 'alpine')
+      const imageInspected = await this.inspectImage(image)
+      const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
+      await this.startContainer(containerCriado)
+    } catch (error) {
+      console.log('Error ao tentar implantar container')
+    }
+  }
+
+  public async hasContainer (containerName: string, container: Dockerode.Container, infoContainer: Dockerode.ContainerInspectInfo): Promise<void> {
+    try {
       await this.stopAndRemoveContainer(container)
-      await this.removeImage(infoContainer.Image)
-
-      console.log('Inicializa download de nova image')
-      const image: Dockerode.Image = await this.pullImage('alpine')
-
-      const imageInspect = await image.inspect()
-      console.log('inspeciona image nova image')
-
-      const imageName = imageInspect.RepoTags
-      console.log('o id da image baixada é: ' + imageName[0])
-
-      const containerCriado = await this.createNewContaier(imageName[0], containerName)
-      await containerCriado.start()
-      console.log('iniciou o novo container')
+      await this.removeImage(this.dockerode, infoContainer.Image)
+      const image: Dockerode.Image = await this.pullImage(this.dockerode, 'alpine')
+      const imageInspected = await this.inspectImage(image)
+      const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
+      await this.startContainer(containerCriado)
     } catch (error) {
-      console.log(error)
-    }
-  }
-
-  public containerObject (imageName: string): Dockerode.Container {
-    return this.dockerode.getContainer(imageName)
-  }
-
-  public async stopAndRemoveContainer (container: Dockerode.Container): Promise<any> {
-    try {
-      await container.stop()
-      console.log('container parado com sucesso')
-      await container.remove()
-      console.log('container removido com sucesso')
-    } catch (error) {
-      console.log('erro ao tentar para container')
-      await container.remove()
-    }
-  }
-
-  public async createNewContaier (imageName: string, containerName: string): Promise<Dockerode.Container> {
-    try {
-      const newContainer = await this.dockerode.createContainer({
-        Image: imageName,
-        name: containerName,
-        AttachStdin: false,
-        AttachStdout: true,
-        AttachStderr: true,
-        Tty: true,
-        // Cmd: ['/bin/bash', '-c', 'tail -f /var/log/dmesg'],
-        OpenStdin: false,
-        StdinOnce: false
-      })
-      console.log('recriou o container')
-      return newContainer
-    } catch (error) {
-      console.log('erro ao tentar criar container')
-    }
-  }
-
-  public async removeImage (imageName: string): Promise<void> {
-    try {
-      await this.dockerode.getImage(imageName).remove()
-      console.log('imagem removida com sucesso')
-    } catch (error) {
-      console.log('Problemas ao remover imagem')
-    }
-  }
-
-  public async pullImage (imageName: string): Promise<any> {
-    let message = ''
-    let json
-    // eslint-disable-next-line no-async-promise-executor
-    return new Promise((resolve, reject) => {
-      this.dockerode.pull(imageName, (pullError: any, stream: Stream) => {
-        if (pullError) {
-          reject(pullError)
-        }
-        if (!stream) {
-          console.log(`Image '${imageName}' doesn't exists`)
-        }
-        stream.on('data', (test) => {
-          message = test + ''
-          json = JSON.parse(message)
-          // console.clear()
-          // console.log(json.progress)
-        })
-
-        this.dockerode.modem.followProgress(stream, (error: any, output: any) => {
-          // onFinished
-          if (error) {
-            reject(error)
-          }
-          console.log('Download concluído')
-          resolve(this.dockerode.getImage(imageName))
-        })
-      })
-    })
-  }
-
-  public async deleteImage (): Promise<any> {
-    try {
-      await this.dockerode.getImage('alpine').remove()
-      console.log('image deletada')
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  public async list (): Promise<void> {
-    try {
-      const list = await this.dockerode.listImages()
-      console.log(list)
-    } catch (error) {
-      console.log(error)
+      console.log('Error ao tentar implantar container')
     }
   }
 }
