@@ -7,7 +7,7 @@ import { env } from '../config/env'
 import * as jwt from 'jsonwebtoken'
 import bcrypt = require('bcrypt')
 
-class Auth {
+export default new class Auth {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public async register (req: Request, res: Response): Promise<any> {
     const { email, password } = req.body
@@ -96,6 +96,4 @@ class Auth {
       })
     }
   }
-}
-
-export default new Auth()
+}()

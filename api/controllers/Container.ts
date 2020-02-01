@@ -4,7 +4,7 @@ import { knex } from '../db/connection'
 import * as I from '../interface/Interfaces'
 import resp from 'resp-express'
 
-class Container {
+export default new class Container {
   public async store (req: NewRequest, res: Response): Promise<void> {
     const body = req.body as I.Container
     try {
@@ -36,5 +36,4 @@ class Container {
       resp.returnErrorMessage(res, 'Erro ao remover o container')
     }
   }
-}
-export default new Container()
+}()

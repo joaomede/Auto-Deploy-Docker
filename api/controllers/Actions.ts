@@ -2,7 +2,7 @@ import { Stream } from 'stream'
 import { ContainerCreateOptions, Container, ContainerInspectInfo, Image } from 'dockerode'
 import Dockerode = require('dockerode')
 
-export class Actions {
+export default class Actions {
   public async noSuchContainer (actions: Actions, dockerode: Dockerode, containerName: string, imagemName: string): Promise<void> {
     try {
       console.log(containerName)

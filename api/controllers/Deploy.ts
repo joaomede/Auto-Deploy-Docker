@@ -3,7 +3,7 @@ import { Response } from 'express'
 import { knex } from '../db/connection'
 import resp from 'resp-express'
 
-class Deploy {
+export default new class Deploy {
   public async store (req: NewRequest, res: Response): Promise<any> {
     try {
       const newDeploy = await knex('deploys').insert({
@@ -28,5 +28,4 @@ class Deploy {
       resp.returnErrorMessage(res, 'Erro ao tentar criar um novo auto deploy')
     }
   }
-}
-export default new Deploy()
+}()

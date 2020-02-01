@@ -1,4 +1,4 @@
-import { Actions } from './Actions'
+import Actions from './Actions'
 import { ContainerInspectInfo } from 'dockerode'
 import { NewRequest } from '../interface/NewRequest'
 import { Response } from 'express'
