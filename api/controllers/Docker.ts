@@ -1,4 +1,5 @@
 import { DockerActions } from './DockerActions'
+import { ContainerInspectInfo, ContainerCreateOptions, Container, Image } from 'dockerode'
 import Dockerode = require('dockerode')
 
 class DeployContainer extends DockerActions {
@@ -18,7 +19,7 @@ class DeployContainer extends DockerActions {
       if (infoContainer === 'no such container') {
         await this.noSuchContainer(containerName, 'postgres:11.5-alpine')
       } else {
-        await this.hasContainer(containerName, imagemName, container, infoContainer as Dockerode.ContainerInspectInfo)
+        await this.hasContainer(containerName, imagemName, container, infoContainer as ContainerInspectInfo)
       }
     } catch (error) {
       console.log(error)
@@ -28,7 +29,7 @@ class DeployContainer extends DockerActions {
   public async noSuchContainer (containerName: string, imagemName: string): Promise<void> {
     try {
       console.log(containerName)
-      const image: Dockerode.Image = await this.pullImage(this.dockerode, imagemName)
+      const image: Image = await this.pullImage(this.dockerode, imagemName)
       const imageInspected = await this.inspectImage(image)
       const database = this.configConstructor(containerName, imageInspected.RepoTags[0])
       // const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
@@ -39,11 +40,11 @@ class DeployContainer extends DockerActions {
     }
   }
 
-  public async hasContainer (containerName: string, imagemName: string, container: Dockerode.Container, infoContainer: Dockerode.ContainerInspectInfo): Promise<void> {
+  public async hasContainer (containerName: string, imagemName: string, container: Container, infoContainer: ContainerInspectInfo): Promise<void> {
     try {
       await this.stopAndRemoveContainer(container)
       await this.removeImage(this.dockerode, infoContainer.Image)
-      const image: Dockerode.Image = await this.pullImage(this.dockerode, imagemName)
+      const image: Image = await this.pullImage(this.dockerode, imagemName)
       const imageInspected = await this.inspectImage(image)
       const database = this.configConstructor(containerName, imageInspected.RepoTags[0])
       // const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
@@ -54,7 +55,7 @@ class DeployContainer extends DockerActions {
     }
   }
 
-  public configConstructor (containerName: string, imageName: string): Dockerode.ContainerCreateOptions {
+  public configConstructor (containerName: string, imageName: string): ContainerCreateOptions {
     return {
       name: containerName,
       Image: imageName,
