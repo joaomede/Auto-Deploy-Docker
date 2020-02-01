@@ -5,11 +5,11 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "declaration": true,
-    "outDir": "./lib",
+    "outDir": "./dist",
     "paths": {
       "@/*": ["*"] // resolve all modules prefixed with `@/` from `src` directory
     }
   },
-  "include": ["./src/**/*"],
+  "include": ["./api/**/*"],
   "exclude": ["node_modules", "**/__tests__/*"]
 }
