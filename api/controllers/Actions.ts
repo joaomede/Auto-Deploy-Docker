@@ -28,7 +28,21 @@ export default class Actions {
       const containerDB = await actions.createNewContaier(dockerode, database)
       await actions.startContainer(containerDB)
     } catch (error) {
-      console.log('Error ao tentar implantar container')
+  public async startDeployRoutine (actions: Actions, containerList: I.Container[]): Promise<void> {
+    for (let index = 0; index < containerList.length; index++) {
+      const config = containerList[index].config as ContainerCreateOptions
+      const dockerode = new Dockerode({ socketPath: '/var/run/docker.sock' })
+      const container = actions.containerObject(dockerode, config.name)
+      const infoContainer = await actions.inspectContainer(container)
+
+      if (infoContainer === 'no such container') {
+        console.log('3 - Inicia sequencia - "no such container"')
+        await actions.noSuchContainer(actions, dockerode, config)
+        console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
+      } else {
+        await actions.hasContainer(actions, dockerode, container, infoContainer as ContainerInspectInfo, config)
+        console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
+      }
     }
   }
 
