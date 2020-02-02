@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app color="blue" dark>
+  <v-app-bar app>
     <v-app-bar-nav-icon
       @click.stop="
         state = !state;
@@ -7,7 +7,7 @@
       "
     />
 
-    <v-toolbar-title>{{ title }}</v-toolbar-title>
+    <v-toolbar-title>Simple Checklist</v-toolbar-title>
 
     <div class="flex-grow-1" />
 
@@ -21,10 +21,8 @@
   </v-app-bar>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
-  name: "Drawer",
+<script>
+export default {
   props: {
     drawer: {
       type: Boolean
@@ -32,8 +30,7 @@ export default Vue.extend({
   },
   data() {
     return {
-      state: false,
-      title: "Auto Deploy"
+      state: false
     };
   },
   watch: {
@@ -47,7 +44,7 @@ export default Vue.extend({
       this.$emit("eventClose", this.state);
     }
   }
-});
+};
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped></style>

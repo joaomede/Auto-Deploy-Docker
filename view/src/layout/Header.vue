@@ -45,10 +45,8 @@
   </v-navigation-drawer>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-export default Vue.extend({
-  name: "Header",
+<script>
+export default {
   props: {
     drawer: {
       type: Boolean
@@ -71,5 +69,7 @@ export default Vue.extend({
       this.$emit("eventClose", this.state);
     }
   }
-});
+};
 </script>
+
+<style lang="scss" scoped></style>

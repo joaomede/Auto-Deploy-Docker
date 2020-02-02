@@ -11,23 +11,34 @@
   </v-app>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import Header from "./layout/Header.vue";
-import Drawer from "./layout/Drawer.vue";
-import Footer from "./layout/Footer.vue";
-
-export default Vue.extend({
-  name: "App",
-
+<script>
+import Header from "./layout/Header";
+import Drawer from "./layout/Drawer";
+import Footer from "./layout/Footer";
+export default {
   components: {
+    Footer,
     Header,
-    Drawer,
-    Footer
+    Drawer
   },
-
-  data: () => ({
-    drawer: false
-  })
-});
+  data() {
+    return {
+      drawer: false
+    };
+  },
+  created() {
+    this.init();
+  },
+  methods: {
+    logout() {
+      // this.$firebase.auth().signOut();
+      // this.$cookies.remove("user");
+      // this.$store.dispatch("setUser");
+      // this.$router.replace("login");
+    },
+    init() {
+      // this.$store.dispatch("setUser");
+    }
+  }
+};
 </script>
