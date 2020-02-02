@@ -14,17 +14,18 @@ export default new class Actions {
     }
   }
 
-  public async hasContainer (actions: Actions, dockerode: Dockerode, containerName: string, imagemName: string, container: Container, infoContainer: ContainerInspectInfo): Promise<void> {
+  public async hasContainer (actions: Actions, dockerode: Dockerode, container: Container, infoContainer: ContainerInspectInfo, config: ContainerCreateOptions): Promise<void> {
     try {
       await actions.stopAndRemoveContainer(container)
       await actions.removeImage(dockerode, infoContainer.Image)
-      const image: Image = await actions.pullImage(dockerode, imagemName)
-      const imageInspected = await actions.inspectImage(image)
-      const database = this.configConstructor(containerName, imageInspected.RepoTags[0])
-      // const containerCriado = await this.createNewContaier(this.dockerode, imageInspected.RepoTags[0], containerName)
-      const containerDB = await actions.createNewContaier(dockerode, database)
+      await actions.pullImage(dockerode, config.Image)
+      const containerDB = await actions.createNewContaier(dockerode, config)
       await actions.startContainer(containerDB)
     } catch (error) {
+      throw new Error('Error ao tentar implantar container')
+    }
+  }
+
   public async startDeployRoutine (actions: Actions, containerList: I.Container[]): Promise<void> {
     for (let index = 0; index < containerList.length; index++) {
       const config = containerList[index].config as ContainerCreateOptions
