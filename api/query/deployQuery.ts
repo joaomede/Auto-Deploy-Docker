@@ -13,7 +13,7 @@ class DeployQuery {
 
   public async findContainers (deployId: number): Promise<I.Container[]> {
     try {
-      const containers: I.Container[] = await knex('containers').where({ deployIdFk: deployId })
+      const containers: I.Container[] = await knex('containers').where({ deployIdFk: deployId }).orderBy('order', 'asc').select()
       return containers
     } catch (error) {
       throw new Error('Erro ao tentar localizar templates de containers')
