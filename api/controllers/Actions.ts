@@ -89,11 +89,11 @@ export default new class Actions {
       await container.stop()
       console.log('2 - container parado com sucesso')
 
-      await container.remove()
+      await container.remove({ v: true })
       console.log('2.1 - container removido com sucesso')
     } catch (error) {
       if (error.reason === 'container already stopped') {
-        await container.remove()
+        await container.remove({ v: true })
         console.log('2.e - o container já estava parado, container removido')
       }
     }
