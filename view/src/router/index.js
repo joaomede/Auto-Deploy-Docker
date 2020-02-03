@@ -9,6 +9,11 @@ const routes = [
     path: "/",
     name: "home",
     component: Home
+  },
+  {
+    path: "*",
+    name: "home",
+    redirect: "/"
   }
   // {
   //   path: "/about",
@@ -22,6 +27,7 @@ const routes = [
 ];
 
 const router = new VueRouter({
+  mode: "history",
   routes
 });
 
