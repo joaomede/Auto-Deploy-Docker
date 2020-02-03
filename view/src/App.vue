@@ -1,7 +1,11 @@
 <template>
   <v-app id="app">
     <Header :drawer="drawer" @eventClose="drawer = $event" />
-    <Drawer :drawer="drawer" @eventClose="drawer = $event" />
+    <Drawer
+      title="Auto Deploy"
+      :drawer="drawer"
+      @eventClose="drawer = $event"
+    />
 
     <v-content>
       <router-view />

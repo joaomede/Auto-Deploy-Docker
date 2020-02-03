@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app>
+  <v-app-bar app color="blue" dark>
     <v-app-bar-nav-icon
       @click.stop="
         state = !state;
@@ -7,7 +7,7 @@
       "
     />
 
-    <v-toolbar-title>Simple Checklist</v-toolbar-title>
+    <v-toolbar-title>{{ title }}</v-toolbar-title>
 
     <div class="flex-grow-1" />
 
@@ -24,6 +24,9 @@
 <script>
 export default {
   props: {
+    title: {
+      type: String
+    },
     drawer: {
       type: Boolean
     }
