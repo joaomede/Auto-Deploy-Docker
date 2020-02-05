@@ -3,6 +3,8 @@
 dockerRun='docker run -it --rm'
 dockerImage='joaomede/nodejs12prod:1.0'
 workDir='/usr/src/app'
-migrate='yarn migrate'
+install='yarn -i'
 
-$dockerRun -v $(pwd):$workDir $dockerImage $migrate
+
+cd ..
+$dockerRun -v $(pwd):$workDir $dockerImage $install
