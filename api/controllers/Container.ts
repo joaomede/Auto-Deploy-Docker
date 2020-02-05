@@ -1,39 +1,29 @@
 import { NewRequest } from '../interface/NewRequest'
 import { Response } from 'express'
-import { knex } from '../db/connection'
-import * as I from '../interface/Interfaces'
 import resp from 'resp-express'
-
+import containerQuery from '../query/containerQuery'
 export default new class Container {
   public async store (req: NewRequest, res: Response): Promise<void> {
-    const body = req.body as I.Container
     try {
-      const newDeploy: I.Container[] = await knex('containers').insert({
-        order: body.order,
-        config: body.config,
-        deployIdFk: Number(req.params.deployId),
-        userIdFk: req.userId
-      } as I.Container).returning('*')
+      const newContainer = await containerQuery.createNewContainerTemplate(
+        req.userId, Number(req.params.deployId), req.body
+      )
 
       resp.returnSucessObject(res, {
         ok: 'Novo auto deploy criado com sucesso',
-        deploy: newDeploy[0]
+        deploy: newContainer
       })
     } catch (error) {
-      console.log(error)
-      resp.returnErrorMessage(res, 'Erro ao tentar criar um novo auto deploy')
+      resp.returnErrorMessage(res, error.message)
     }
   }
 
   public async destroy (req: NewRequest, res: Response): Promise<void> {
     try {
-      await knex('containers').where({
-        id: req.params.id
-      }).del()
-
+      await containerQuery.deleteContainerById(req.userId, Number(req.params.id))
       resp.returnSucessMessage(res, 'Container removido com sucesso')
     } catch (error) {
-      resp.returnErrorMessage(res, 'Erro ao remover o container')
+      resp.returnErrorMessage(res, error.message)
     }
   }
 }()
