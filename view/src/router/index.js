@@ -1,19 +1,21 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/Home.vue";
 import { http } from "../plugins/axios";
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "*",
-    name: "home",
-    redirect: "/"
+    redirect: "/home"
   },
   {
     path: "/",
+    redirect: "/home"
+  },
+  {
+    path: "/home",
     name: "home",
-    component: Home,
+    component: () => import("../views/Home.vue"),
     meta: { requerAuth: true }
   },
   {
