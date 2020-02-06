@@ -29,8 +29,6 @@ export default new Vuex.Store({
           headers: { authorization: "semAutenticacao" }
         };
       }
-
-      router.replace("/home");
     },
     setLogin(state, user) {
       const auth = {
@@ -42,6 +40,7 @@ export default new Vuex.Store({
 
       window.$cookies.set("user", auth);
       this.commit("setUser");
+      router.replace("/home");
     }
   },
   actions: {
