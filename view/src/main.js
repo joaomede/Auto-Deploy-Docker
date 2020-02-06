@@ -6,6 +6,9 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import axios from "./plugins/axios";
 import "./css/style.css";
+import VueCookies from "vue-cookies";
+
+Vue.use(VueCookies);
 Vue.use(axios);
 
 Vue.config.productionTip = false;
