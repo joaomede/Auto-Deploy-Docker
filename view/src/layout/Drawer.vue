@@ -11,11 +11,11 @@
 
     <div class="flex-grow-1" />
 
-    <v-btn icon to="login">
+    <v-btn icon to="login" v-if="this.user.id === null">
       <v-icon>fas fa-sign-in-alt</v-icon>
     </v-btn>
 
-    <v-btn icon @click="logout()">
+    <v-btn icon @click="logout()" v-if="this.user.id !== null">
       <v-icon>fas fa-sign-out-alt</v-icon>
     </v-btn>
   </v-app-bar>
