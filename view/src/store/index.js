@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import cookie from "vue-cookies";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -12,29 +11,27 @@ export default new Vuex.Store({
   },
   mutations: {
     setUser(state) {
-      const user = cookie.VueCookies.get("user");
+      const user = window.$cookies.get("user");
       if (user !== null) {
         state.user = {
           id: user.id,
           name: user.nome,
           email: user.email,
-          headers: { authorization: "Bearer " + user.token },
-          contratoId: user.contratoIdFk
+          headers: { authorization: "Bearer " + user.token }
         };
       } else {
         state.user = {
           id: null,
           name: "Usuário Deslogado",
           email: null,
-          headers: { authorization: "semAutenticacao" },
-          contrato: null
+          headers: { authorization: "semAutenticacao" }
         };
       }
     }
   },
   actions: {
-    setUser({ commit }, user) {
-      commit("setUser", user);
+    setUser({ commit }) {
+      commit("setUser");
     }
   },
   modules: {}
