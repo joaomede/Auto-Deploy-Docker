@@ -1,6 +1,6 @@
 <template>
   <div class="centralDiv">
-    <v-card class="loginBox">
+    <v-card class="ma-2">
       <h2 class="text-center">
         Login
       </h2>
@@ -20,6 +20,9 @@
           type="Password"
         />
         <div class="text-center my-2">
+          <v-btn color="black" dark class="ma-2" to="/register">
+            Register
+          </v-btn>
           <v-btn color="green" dark class="ma-2" @click="login()">
             Login
           </v-btn>
@@ -53,8 +56,11 @@ export default {
   methods: {
     async login() {
       try {
-        const user = await this.$axios.post("/api/auth/login", this.loginForm);
-        this.$cookies.set("user", user);
+        const result = await this.$axios.post(
+          "/api/auth/login",
+          this.loginForm
+        );
+        this.$store.dispatch("setLogin", result.data.user);
       } catch (error) {
         console.log(error.response.data.error);
       }
