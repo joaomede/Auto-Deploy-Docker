@@ -31,7 +31,7 @@ export default {
     };
   },
   created() {
-    this.init();
+    this.$store.dispatch("setUser");
   },
   methods: {
     logout() {
@@ -39,9 +39,6 @@ export default {
       // this.$cookies.remove("user");
       // this.$store.dispatch("setUser");
       // this.$router.replace("login");
-    },
-    init() {
-      // this.$store.dispatch("setUser");
     }
   }
 };
