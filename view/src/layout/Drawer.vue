@@ -45,6 +45,9 @@ export default {
     },
     eventClose() {
       this.$emit("eventClose", this.state);
+    },
+    logout() {
+      this.$emit("logout");
     }
   }
 };

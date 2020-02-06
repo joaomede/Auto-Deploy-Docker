@@ -3,6 +3,7 @@
     <Header :drawer="drawer" @eventClose="drawer = $event" />
     <Drawer
       title="Auto Deploy"
+      @logout="logout()"
       :drawer="drawer"
       @eventClose="drawer = $event"
     />
@@ -35,10 +36,9 @@ export default {
   },
   methods: {
     logout() {
-      // this.$firebase.auth().signOut();
-      // this.$cookies.remove("user");
-      // this.$store.dispatch("setUser");
-      // this.$router.replace("login");
+      this.$cookies.remove("user");
+      this.$store.dispatch("setUser");
+      this.$router.replace("login");
     }
   }
 };
