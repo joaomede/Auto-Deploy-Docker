@@ -56,11 +56,11 @@ export default {
         const user = await this.$axios.post("/api/auth/login", this.loginForm);
         this.$cookies.set("user", user);
       } catch (error) {
-        console.log(error);
+        console.log(error.response.data.error);
       }
     },
     checkLogin() {
-      if (this.user != null) {
+      if (this.user.id !== null) {
         this.$router.replace("home");
       }
     }

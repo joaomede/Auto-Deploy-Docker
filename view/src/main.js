@@ -7,7 +7,9 @@ import vuetify from "./plugins/vuetify";
 import axios from "./plugins/axios";
 import "./css/style.css";
 import VueCookies from "vue-cookies";
+import mixinsComputed from "./mixins/mixin";
 
+Vue.mixin(mixinsComputed);
 Vue.use(VueCookies);
 Vue.use(axios);
 
