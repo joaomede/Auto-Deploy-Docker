@@ -65,9 +65,9 @@ export default {
         this.$cookies.set("user", result.data.user);
         this.$store.dispatch("setUser");
         this.$router.replace("/home");
-        console.log(result.data.ok);
+        this.notify(result.data.ok, "green");
       } catch (error) {
-        console.log(error.response.data.error);
+        this.notify(error.response.data.error);
       }
     },
     checkLogin() {

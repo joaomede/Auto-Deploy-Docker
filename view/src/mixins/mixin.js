@@ -1,8 +1,4 @@
-import snackbar from "../components/alert/Snackbar.vue";
 export default {
-  components: {
-    snackbar
-  },
   computed: {
     user() {
       if (this.$store.getters.getUser !== null) {
@@ -17,6 +13,14 @@ export default {
           }
         };
       }
+    }
+  },
+  methods: {
+    notify(message, color) {
+      this.$toast(message, {
+        color: color,
+        dismissable: true
+      });
     }
   }
 };

@@ -61,8 +61,9 @@ export default {
           this.loginForm
         );
         this.$store.dispatch("setLogin", result.data.user);
+        this.notify(result.data.ok, "green");
       } catch (error) {
-        console.log(error.response.data.error);
+        this.notify(error.response.data.error, "red");
       }
     },
     checkLogin() {
