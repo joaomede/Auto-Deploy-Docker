@@ -20,7 +20,12 @@ export default new class Auth {
 
         try {
           const user = await knex('users').insert(req.body).returning('*')
-          resp.returnSucessObject(res, user)
+          user[0].password = undefined
+          user[0].token = await Plugin.generateToken({ id: user[0].id }, '7d')
+          resp.returnSucessObject(res, {
+            ok: `Bem vindo de volta ${user[0].name}`,
+            user: user[0]
+          })
         } catch (error) {
           resp.returnErrorMessage(res, 'Erro ao tentar cadastrar o novo usuário')
         }
@@ -44,9 +49,10 @@ export default new class Auth {
         const match = bcrypt.compareSync(password, user[0].password)
         if (match) {
           user[0].password = undefined
+          user[0].token = await Plugin.generateToken({ id: user[0].id }, '7d')
           resp.returnSucessObject(res, {
-            user: user[0],
-            token: await Plugin.generateToken({ id: user[0].id }, '7d')
+            ok: `Seja bem vindo ${user[0].name}`,
+            user: user[0]
           })
         } else {
           resp.returnErrorMessage(res, 'A senhão está incorreta')
