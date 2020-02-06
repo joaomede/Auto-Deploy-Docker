@@ -6,32 +6,17 @@
     <v-container>
       <DialogAddNewDeploy
         :dialog="dialogDeploy"
-        @eventClose="this.dialogDeploy = false"
+        @eventClose="dialogDeploy = false"
       />
       <h2 class="text-center">All Deploys</h2>
       <v-card max-width="600" class="mx-auto">
         <v-list two-line subheader>
           <v-list-item
-            v-for="item in listDeploys"
-            :key="item.title"
-            @click="teste()"
+            v-for="deploy in listDeploys"
+            :key="deploy.id"
+            @click="toContainerView(deploy.id)"
           >
-            <v-list-item-content>
-              <v-list-item-title v-text="item.nameProject"></v-list-item-title>
-              <v-list-item-subtitle v-text="item.secret"></v-list-item-subtitle>
-            </v-list-item-content>
-
-            <v-list-item-action>
-              <v-btn icon @click.stop="testeTool()">
-                <v-icon color="red lighten">fas fa-edit</v-icon>
-              </v-btn>
-            </v-list-item-action>
-
-            <v-list-item-action>
-              <v-btn icon @click.stop="testeTool()">
-                <v-icon color="red lighten">mdi-delete</v-icon>
-              </v-btn>
-            </v-list-item-action>
+            <ListDeploys :deploy="deploy" />
           </v-list-item>
         </v-list>
       </v-card>
@@ -40,24 +25,29 @@
 </template>
 
 <script>
+import ListDeploys from "../components/lists/ListDeploys";
 import DialogAddNewDeploy from "../components/dialogs/DialogAddNewDeploy";
 export default {
   components: {
-    DialogAddNewDeploy
+    DialogAddNewDeploy,
+    ListDeploys
   },
   data() {
     return {
       dialogDeploy: false,
       listDeploys: [
         {
+          id: 1,
           nameProject: "System One",
           secret: "teste"
         },
         {
+          id: 2,
           nameProject: "System Two",
           secret: "teste"
         },
         {
+          id: 3,
           nameProject: "System Three",
           secret: "teste"
         }
@@ -65,6 +55,9 @@ export default {
     };
   },
   methods: {
+    toContainerView(id) {
+      this.$router.push({ name: "Containers", params: { id: "" + id } });
+    },
     addNewDeploy() {},
     teste() {},
     testeTool() {}
