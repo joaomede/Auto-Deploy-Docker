@@ -62,9 +62,7 @@ export default {
           "/api/auth/register",
           this.loginForm
         );
-        this.$cookies.set("user", result.data.user);
-        this.$store.dispatch("setUser");
-        this.$router.replace("/home");
+        this.$store.dispatch("setLogin", result.data.user);
         this.notify(result.data.ok, "green");
       } catch (error) {
         this.notify(error.response.data.error);
