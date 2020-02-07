@@ -15,8 +15,7 @@ export default new class DeployContainer {
       await actions.startDeployRoutine(actions, containers)
       resp.returnSucessMessage(res, 'Implantação concluída com sucesso')
     } catch (error) {
-      resp.returnErrorMessage(res, error)
-      console.log(error)
+      resp.returnErrorMessage(res, error.message)
     }
   }
 }()

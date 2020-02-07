@@ -10,7 +10,7 @@ export default new class Actions {
       const containerDB = await actions.createNewContaier(dockerode, config)
       await actions.startContainer(containerDB)
     } catch (error) {
-      console.log('Error ao tentar implantar container')
+      throw new Error('Error ao tentar implantar container')
     }
   }
 
@@ -35,10 +35,21 @@ export default new class Actions {
 
       if (infoContainer === 'no such container') {
         console.log('3 - Inicia sequencia - "no such container"')
-        await actions.noSuchContainer(actions, dockerode, config)
+        try {
+          await actions.noSuchContainer(actions, dockerode, config)
+        } catch (error) {
+          console.log(error.message)
+          throw new Error(error.message)
+        }
         console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
       } else {
-        await actions.hasContainer(actions, dockerode, container, infoContainer as ContainerInspectInfo, config)
+        console.log('3 - Inicia sequencia - "has Container"')
+        try {
+          await actions.hasContainer(actions, dockerode, container, infoContainer as ContainerInspectInfo, config)
+        } catch (error) {
+          console.log(error.message)
+          throw new Error(error.message)
+        }
         console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
       }
     }
@@ -47,10 +58,10 @@ export default new class Actions {
   public async startContainer (newContainer: Dockerode.Container): Promise<void> {
     try {
       await newContainer.start()
-      console.log('7 - iniciou o novo container')
+      console.log('6 - iniciou o novo container')
     } catch (error) {
       console.log(error)
-      console.log('7.e - Erro ao tentar iniciar o container')
+      console.log('6.e - Erro ao tentar iniciar o container')
       return error
     }
   }
@@ -72,17 +83,17 @@ export default new class Actions {
     return docker.getContainer(containerName)
   }
 
-  public async inspectImage (image: Dockerode.Image): Promise<Dockerode.ImageInspectInfo> {
-    try {
-      const imageInspect = await image.inspect()
-      console.log('5 - inspeciona nova image')
-      console.log('5.1 - o id da image baixada é: ' + imageInspect.RepoTags[0])
-      return imageInspect
-    } catch (error) {
-      console.log('5.e - nova imagem não foi encontrada')
-      return error
-    }
-  }
+  // public async inspectImage (image: Dockerode.Image): Promise<Dockerode.ImageInspectInfo> {
+  //   try {
+  //     const imageInspect = await image.inspect()
+  //     console.log('5 - inspeciona nova image')
+  //     console.log('5.1 - o id da image baixada é: ' + imageInspect.RepoTags[0])
+  //     return imageInspect
+  //   } catch (error) {
+  //     console.log('5.e - nova imagem não foi encontrada')
+  //     return error
+  //   }
+  // }
 
   public async stopAndRemoveContainer (container: Dockerode.Container): Promise<void> {
     try {
@@ -102,11 +113,12 @@ export default new class Actions {
   public async createNewContaier (docker: Dockerode, config: Dockerode.ContainerCreateOptions): Promise<Dockerode.Container> {
     try {
       const newContainer = await docker.createContainer(config)
-      console.log('6 - recriou o container')
+      console.log('5 - recriou o container')
       return newContainer
     } catch (error) {
+      console.log('5.e - erro ao tentar criar container')
       console.log(error)
-      console.log('6.e - erro ao tentar criar container')
+      throw new Error('5.e - erro ao tentar criar container')
     }
   }
 
@@ -115,7 +127,7 @@ export default new class Actions {
       await docker.getImage(imageName).remove()
       console.log('3 - imagem removida com sucesso')
     } catch (error) {
-      console.log('3.e - Problemas ao remover imagem')
+      throw new Error('3.e - Problemas ao remover imagem')
     }
   }
 
