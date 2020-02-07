@@ -2,7 +2,7 @@ import { Stream } from 'stream'
 import { ContainerCreateOptions, Container, ContainerInspectInfo } from 'dockerode'
 import * as I from '../interface/Interfaces'
 import mail from '../modules/Mailer'
-import { smtp } from '../config/config'
+import { smtp } from '../config/smtp'
 import Dockerode = require('dockerode')
 
 export default new class Actions {

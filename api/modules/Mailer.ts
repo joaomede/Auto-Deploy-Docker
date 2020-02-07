@@ -1,4 +1,4 @@
-import { smtp } from '../config/config'
+import { smtp } from '../config/smtp'
 import nodemailer = require('nodemailer')
 
 const { secure, user, pass, tls } = smtp
