@@ -1,7 +1,8 @@
 import { Stream } from 'stream'
-import { ContainerCreateOptions, Container, ContainerInspectInfo, Image } from 'dockerode'
+import { ContainerCreateOptions, Container, ContainerInspectInfo } from 'dockerode'
 import * as I from '../interface/Interfaces'
 import mail from '../modules/Mailer'
+import { smtp } from '../config/config'
 import Dockerode = require('dockerode')
 
 export default new class Actions {
@@ -31,7 +32,7 @@ export default new class Actions {
     try {
       await mail.sendMail({
         to: email,
-        from: '"Auto Deplloy" <teste@gmail.com>',
+        from: `"Auto Deploy" <${smtp.user}>`,
         subject: 'Auto Deploy Docker Result',
         text: context,
         html: `<div>${context}<div>`

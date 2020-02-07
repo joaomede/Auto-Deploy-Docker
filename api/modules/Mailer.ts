@@ -1,11 +1,10 @@
-import { config } from '../config/config'
+import { smtp } from '../config/config'
 import nodemailer = require('nodemailer')
 
-const { host, secure, user, pass, tls } = config
+const { secure, user, pass, tls } = smtp
 
 const transport = nodemailer.createTransport({
   service: 'gmail',
-  host,
   secure,
   auth: { user, pass },
   tls
