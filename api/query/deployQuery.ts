@@ -41,7 +41,7 @@ export default new class DeployQuery {
    */
   public async deleteDeployById (userId: number, deployId: number): Promise<void> {
     try {
-      await knex('deploys').where({ userIdFk: userId, id: deployId }).select()
+      await knex('deploys').where({ userIdFk: userId, id: deployId }).del()
     } catch (error) {
       throw new Error('Error when trying to delete the deploy')
     }
