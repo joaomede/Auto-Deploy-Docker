@@ -66,6 +66,16 @@ export default new Vuex.Store({
         let index = state.deployList.length;
         Vue.set(state.deployList, index, newDeploy);
       }
+    },
+    async setContainerList(state, id) {
+      try {
+        const result = await http.get(`/api/container/getall/${id}`, {
+          headers: state.user.headers
+        });
+        state.containerList = result.data;
+      } catch (error) {
+        console.log("erro ao tentar carregar");
+      }
     }
   },
   actions: {
@@ -84,8 +94,8 @@ export default new Vuex.Store({
     setNewDeploy({ commit }, newDeploy) {
       commit("setNewDeploy", newDeploy);
     },
-    setContainerList({ commit }, containerList) {
-      commit("setContainerList", containerList);
+    setContainerList({ commit }, id) {
+      commit("setContainerList", id);
     }
   },
   modules: {}
