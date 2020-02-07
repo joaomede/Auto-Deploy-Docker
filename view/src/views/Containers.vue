@@ -1,5 +1,9 @@
 <template>
   <div class="centralDiv">
+    <DialogAddNewContainer
+      :dialog="dialogContainer"
+      @eventClose="dialogContainer = false"
+    />
     <v-btn
       absolute
       dark
@@ -7,16 +11,13 @@
       bottom
       right
       color="blue"
-      @click="addNewContainer()"
+      @click="dialogContainer = true"
     >
       <v-icon>mdi-plus</v-icon>
     </v-btn>
+    <h2 class="text-center">All Containers</h2>
+
     <v-container>
-      <DialogAddNewContainer
-        :dialog="dialogContainer"
-        @eventClose="dialogContainer = false"
-      />
-      <h2 class="text-center">All Containers</h2>
       <v-card max-width="600" class="mx-auto">
         <v-list two-line subheader>
           <v-list-item
@@ -34,11 +35,11 @@
 
 <script>
 import ListContainer from "../components/lists/ListContainer";
-//import DialogAddNewContainer from "../components/dialogs/DialogAddNewContainer";
+import DialogAddNewContainer from "../components/dialogs/DialogAddNewContainer";
 export default {
   components: {
-    ListContainer
-    //DialogAddNewContainer
+    ListContainer,
+    DialogAddNewContainer
   },
   props: {
     id: {
@@ -47,7 +48,7 @@ export default {
   },
   data() {
     return {
-      dialogContainer: "",
+      dialogContainer: false,
       listContainers: [
         {
           id: 1,
