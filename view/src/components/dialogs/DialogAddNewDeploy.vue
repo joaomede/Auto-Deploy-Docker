@@ -72,7 +72,7 @@ export default {
         });
         this.notify(result.data.ok, "green");
         this.eventClose();
-        this.$emit("createdNew");
+        this.$store.dispatch("setNewDeploy", result.data.deploy);
       } catch (error) {
         this.notify(error.message, "red");
       }

@@ -5,21 +5,12 @@
     </v-btn>
     <DialogAddNewDeploy
       :dialog="dialogAddNewDeploy"
-      @createdNew="listAllDeploys()"
       @eventClose="dialogAddNewDeploy = false"
     />
     <v-container>
       <h2 class="text-center">All Deploys</h2>
       <v-card max-width="600" class="mx-auto">
-        <v-list two-line subheader>
-          <v-list-item
-            v-for="deploy in listDeploys"
-            :key="deploy.id"
-            @click="toContainerView(deploy.id)"
-          >
-            <ListDeploys :deploy="deploy" />
-          </v-list-item>
-        </v-list>
+        <ListDeploys />
       </v-card>
     </v-container>
   </div>
@@ -40,27 +31,15 @@ export default {
     };
   },
   created() {
-    this.listAllDeploys();
+    this.$store.dispatch("setDeployList");
   },
   methods: {
     toContainerView(id) {
       this.$router.push({ name: "Containers", params: { id: "" + id } });
     },
-    async listAllDeploys() {
-      try {
-        const result = await this.$axios.get("/api/deploy/getall", {
-          headers: this.user.headers
-        });
-        this.listDeploys = result.data;
-      } catch (error) {
-        this.notify(error.response.data.error, "red");
-      }
-    },
     addNewDeploy() {
       this.dialogAddNewDeploy = true;
-    },
-    teste() {},
-    testeTool() {}
+    }
   }
 };
 </script>
