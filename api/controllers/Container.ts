@@ -26,4 +26,15 @@ export default new class Container {
       resp.returnErrorMessage(res, error.message)
     }
   }
+
+  public async indexAll (req: NewRequest, res: Response): Promise<void> {
+    try {
+      const listContainer = await containerQuery.findAllContainerByUserId(
+        req.userId, Number(req.params.deployId)
+      )
+      resp.returnSucessObject(res, listContainer)
+    } catch (error) {
+      resp.returnErrorMessage(res, error.message)
+    }
+  }
 }()

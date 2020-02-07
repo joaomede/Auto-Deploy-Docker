@@ -32,6 +32,18 @@ export default new class ContainerQuery {
     }
   }
 
+  public async findAllContainerByUserId (userId: number, deployId: number): Promise<I.Container[]> {
+    try {
+      const listContainer: I.Container[] = await knex('containers')
+        .where({ userIdFk: userId, deployIdFk: deployId })
+        .select()
+
+      return listContainer
+    } catch (error) {
+      throw new Error('Error when trying to list all containers')
+    }
+  }
+
   public async deleteContainerById (userId: number, containerId: number): Promise<void> {
     try {
       await knex('containers').where({

@@ -34,6 +34,11 @@ routes.delete(
   cContainer.destroy
 )
 
+routes.get(
+  '/api/container/getall/:deployId',
+  cContainer.indexAll
+)
+
 // WebHook
 routes.post(
   '/api/deploy/webhook/:secret',
