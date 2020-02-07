@@ -18,7 +18,7 @@ export default new Vuex.Store({
   mutations: {
     setUser(state) {
       const user = window.$cookies.get("user");
-      if (user !== null || user !== undefined) {
+      if (user !== null && user !== undefined) {
         state.user = {
           id: user.id,
           name: user.name,
