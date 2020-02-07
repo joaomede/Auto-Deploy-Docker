@@ -13,6 +13,16 @@ export default {
           }
         };
       }
+    },
+    cContainerList() {
+      if (this.$store.getters.getContainerList !== null) {
+        return this.$store.getters.getContainerList;
+      }
+    },
+    cDeployList() {
+      if (this.$store.getters.getDeployList !== null) {
+        return this.$store.getters.getDeployList;
+      }
     }
   },
   methods: {

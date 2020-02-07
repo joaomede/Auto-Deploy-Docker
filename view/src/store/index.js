@@ -1,14 +1,19 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import router from "../router";
+import { http } from "../plugins/axios";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    user: {}
+    user: {},
+    containerList: [],
+    deployList: []
   },
   getters: {
-    getUser: state => state.user
+    getUser: state => state.user,
+    getDeployList: state => state.deployList,
+    getContainerList: state => state.containerList
   },
   mutations: {
     setUser(state) {
@@ -39,6 +44,28 @@ export default new Vuex.Store({
       window.$cookies.set("user", auth);
       this.commit("setUser");
       router.replace("/home");
+    },
+    async setDeployList(state) {
+      try {
+        const result = await http.get("/api/deploy/getall", {
+          headers: state.user.headers
+        });
+        state.deployList = result.data;
+      } catch (error) {
+        this.notify(error.response.data.error, "red");
+      }
+    },
+    removeDeploy(state, index) {
+      Vue.delete(state.deployList, index);
+    },
+    setNewDeploy(state, newDeploy) {
+      if (state.deployList === undefined) {
+        let index = 0;
+        Vue.set(state.deployList, index, newDeploy);
+      } else {
+        let index = state.deployList.length;
+        Vue.set(state.deployList, index, newDeploy);
+      }
     }
   },
   actions: {
@@ -47,6 +74,18 @@ export default new Vuex.Store({
     },
     setLogin({ commit }, user) {
       commit("setLogin", user);
+    },
+    setDeployList({ commit }) {
+      commit("setDeployList");
+    },
+    removeDeploy({ commit }, index) {
+      commit("removeDeploy", index);
+    },
+    setNewDeploy({ commit }, newDeploy) {
+      commit("setNewDeploy", newDeploy);
+    },
+    setContainerList({ commit }, containerList) {
+      commit("setContainerList", containerList);
     }
   },
   modules: {}
