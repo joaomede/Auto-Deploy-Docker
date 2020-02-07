@@ -13,13 +13,12 @@ export default new Vuex.Store({
   mutations: {
     setUser(state) {
       const user = window.$cookies.get("user");
-
-      if (user !== null) {
+      if (user !== null || user !== undefined) {
         state.user = {
           id: user.id,
-          name: user.nome,
+          name: user.name,
           email: user.email,
-          headers: { authorization: "Bearer " + user.token }
+          headers: user.headers
         };
       } else {
         state.user = {
@@ -33,11 +32,10 @@ export default new Vuex.Store({
     setLogin(state, user) {
       const auth = {
         id: user.id,
-        name: user.nome,
+        name: user.name,
         email: user.email,
         headers: { authorization: "Bearer " + user.token }
       };
-
       window.$cookies.set("user", auth);
       this.commit("setUser");
       router.replace("/home");
