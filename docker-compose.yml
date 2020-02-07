@@ -1,50 +1,61 @@
 version: "3.3"
 
 services:
-  pg:
+  db:
     image: postgres:11.5-alpine
-    container_name: pg-database
-    env_file:
-      - .env
-    ports:
-      - ${PORTDB}:5432
-    expose:
-      - "5432"
+    container_name: pg-dev
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: senha
+      POSTGRES_DB: senha
     volumes:
       - ./postgres:/var/lib/postgresql/data
       - "/etc/localtime:/etc/localtime:ro"
     networks:
       - redePostgres
 
-  # pgadmin:
-  #   container_name: pgadmin
-  #   image: dpage/pgadmin4
-  #   environment:
-  #     PGADMIN_DEFAULT_EMAIL: "admin@admin.com"
-  #     PGADMIN_DEFAULT_PASSWORD: "admin"
-  #   ports:
-  #     - "8888:80"
-  #   depends_on:
-  #     - pg
-  #   networks:
-  #     - redePostgres
-
-  server:
+  dev-api:
     image: joaomede/nodejs12prod:1.0
-    container_name: "server-api-doc"
-    ports:
-      - ${PORTHOST}:${PORTHOST}
+    container_name: "dev-api"
     depends_on:
-      - pg
+      - db
     links:
-      - pg
+      - db
+    environment:
+      NODE_ENV: "dev"
+      HOSTDB: db
+      PORTHOST: 5100
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: senha
+      POSTGRES_DB: senha
     env_file:
       - .env
-    command: node dist/Server
+    ports:
+      - 5100:5100
+    command: ./scripts/dev.sh
     expose:
-      - ${PORTHOST}
+      - 5100
     volumes:
       - .:/usr/src/app
+      - /etc/letsencrypt:/etc/letsencrypt
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - redePostgres
+
+  dev-view:
+    image: joaomede/nodejs12prod:1.0
+    container_name: "dev-view"
+    ports:
+      - 8080:8080
+    links:
+      - dev-api
+    environment:
+      VUE_APP_APIURL: http://localhost:5100
+    command: yarn dev
+    expose:
+      - 8080
+    volumes:
+      - ./view:/usr/src/app
       - /etc/letsencrypt:/etc/letsencrypt
       - "/etc/localtime:/etc/localtime:ro"
     networks:
