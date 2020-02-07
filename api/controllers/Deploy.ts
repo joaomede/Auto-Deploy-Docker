@@ -23,7 +23,7 @@ export default new class Deploy {
 
   public async destroy (req: NewRequest, res: Response): Promise<void> {
     try {
-      await knex('deploys').where({ id: req.params.id })
+      await query.deleteDeployById(req.userId, Number(req.params.id))
       resp.returnSucessMessage(res, 'Deploy removido com sucesso')
     } catch (error) {
       resp.returnErrorMessage(res, 'Erro ao tentar criar um novo auto deploy')
