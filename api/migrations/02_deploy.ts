@@ -5,6 +5,7 @@ export async function up (knex: Knex): Promise<void> {
     table.increments()
     table.text('nameProject').notNullable()
     table.text('secret').notNullable()
+    table.text('email').notNullable()
     table.integer('userIdFk').unsigned().references('id').inTable('users').onDelete('CASCADE').index()
   })
 }

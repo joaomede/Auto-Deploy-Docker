@@ -1,6 +1,7 @@
 import { Stream } from 'stream'
 import { ContainerCreateOptions, Container, ContainerInspectInfo, Image } from 'dockerode'
 import * as I from '../interface/Interfaces'
+import mail from '../modules/Mailer'
 import Dockerode = require('dockerode')
 
 export default new class Actions {
@@ -26,7 +27,23 @@ export default new class Actions {
     }
   }
 
-  public async startDeployRoutine (actions: Actions, containerList: I.Container[]): Promise<void> {
+  public async sendEmail (email: string, context: string): Promise<void> {
+    try {
+      await mail.sendMail({
+        to: email,
+        from: '"Auto Deplloy" <teste@gmail.com>',
+        subject: 'Auto Deploy Docker Result',
+        text: context,
+        html: `<div>${context}<div>`
+      })
+    } catch (error) {
+      if (error) {
+        throw new Error('Não foi possível enviar o email')
+      }
+    }
+  }
+
+  public async startDeployRoutine (actions: Actions, containerList: I.Container[], email: string): Promise<void> {
     for (let index = 0; index < containerList.length; index++) {
       const config = containerList[index].config as ContainerCreateOptions
       const dockerode = new Dockerode({ socketPath: '/var/run/docker.sock' })
@@ -37,20 +54,24 @@ export default new class Actions {
         console.log('3 - Inicia sequencia - "no such container"')
         try {
           await actions.noSuchContainer(actions, dockerode, config)
+          await actions.sendEmail(email, 'sucess')
+          console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
         } catch (error) {
           console.log(error.message)
+          await actions.sendEmail(email, error.message)
           throw new Error(error.message)
         }
-        console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
       } else {
         console.log('3 - Inicia sequencia - "has Container"')
         try {
           await actions.hasContainer(actions, dockerode, container, infoContainer as ContainerInspectInfo, config)
+          await actions.sendEmail(email, 'sucess')
+          console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
         } catch (error) {
           console.log(error.message)
+          await actions.sendEmail(email, error.message)
           throw new Error(error.message)
         }
-        console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
       }
     }
   }
