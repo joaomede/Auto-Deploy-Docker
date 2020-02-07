@@ -1,23 +1,18 @@
 import { NewRequest } from '../interface/NewRequest'
 import { Response } from 'express'
-import { knex } from '../db/connection'
 import resp from 'resp-express'
 import query from '../query/deployQuery'
 
 export default new class Deploy {
-  public async store (req: NewRequest, res: Response): Promise<any> {
+  public async store (req: NewRequest, res: Response): Promise<void> {
     try {
-      const newDeploy = await knex('deploys').insert({
-        secret: req.body.secret,
-        userIdFk: req.userId
-      }).returning('*')
-
+      const newDeploy = await query.createNewDeploy(req.userId, req.body.secret)
       resp.returnSucessObject(res, {
         ok: 'Novo auto deploy criado com sucesso',
-        deploy: newDeploy[0]
+        deploy: newDeploy
       })
     } catch (error) {
-      resp.returnErrorMessage(res, 'Erro ao tentar criar um novo auto deploy')
+      resp.returnErrorMessage(res, error.message)
     }
   }
 

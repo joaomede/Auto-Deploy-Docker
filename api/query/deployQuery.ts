@@ -14,6 +14,20 @@ export default new class DeployQuery {
     }
   }
 
+  public async createNewDeploy (userId: number, secret: number): Promise<I.Deploy> {
+    try {
+      const form = { secret: secret, userIdFk: userId }
+      await knex('deploys').insert(form)
+
+      const deploy: I.Deploy[] = await knex('deploys')
+        .where(form)
+        .select()
+
+      return deploy[0]
+    } catch (error) {
+      throw new Error('Error when trying to create new deploy')
+    }
+  }
 
   /**
    * @description Delete a deploy by ID
