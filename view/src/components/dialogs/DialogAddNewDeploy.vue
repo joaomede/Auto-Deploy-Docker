@@ -1,38 +1,36 @@
 <template>
-  <div>
-    <v-dialog v-model="dialogComponent" max-width="500">
-      <v-card>
-        <v-card-title class="headline">Create New Project Deploy</v-card-title>
-        <div class="mx-2">
-          <v-text-field
-            v-model="form.nameProject"
-            label="Set a Project Name"
-            outlined
-            dense
-            required
-          ></v-text-field>
-          <v-text-field
-            v-model="form.secret"
-            label="Set a Secret"
-            outlined
-            dense
-            required
-          ></v-text-field>
-        </div>
+  <v-dialog v-model="dialogComponent" max-width="500">
+    <v-card class="md-2">
+      <v-card-title class="headline">Create New Project Deploy</v-card-title>
+      <div class="mx-2">
+        <v-text-field
+          v-model="form.nameProject"
+          label="Set a Project Name"
+          outlined
+          dense
+          required
+        ></v-text-field>
+        <v-text-field
+          v-model="form.secret"
+          label="Set a Secret"
+          outlined
+          dense
+          required
+        ></v-text-field>
+      </div>
 
-        <v-card-actions>
-          <v-spacer></v-spacer>
+      <v-card-actions>
+        <v-spacer></v-spacer>
 
-          <v-btn color="black" dark @click="dialogComponent = false">
-            Back
-          </v-btn>
-          <v-btn color="green" dark @click="createNewDeployProject()">
-            Save
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+        <v-btn color="black" dark @click="dialogComponent = false">
+          Back
+        </v-btn>
+        <v-btn color="green" dark @click="createNewDeployProject()">
+          Save
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script>

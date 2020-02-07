@@ -1,12 +1,13 @@
 <template>
-  <v-dialog v-model="newDialog" max-width="400">
-    <v-card>
-      <h2>Define a new container template</h2>
+  <v-dialog v-model="newDialog" max-width="500">
+    <v-card class="pa-2">
+      <h2 class="text-center">Define a new container template</h2>
 
       <v-text-field
         v-model="form.order"
         label="Order to start"
         dense
+        outlined
         required
       ></v-text-field>
 
@@ -14,6 +15,7 @@
         v-model="form.config.name"
         label="Container Name"
         dense
+        outlined
         required
       ></v-text-field>
 
@@ -21,8 +23,18 @@
         v-model="form.config.Image"
         label="Image Name"
         dense
+        outlined
         required
       ></v-text-field>
+
+      <v-text-field
+        v-model="form.config.WorkingDir"
+        label="Working Directory"
+        dense
+        outlined
+        required
+      ></v-text-field>
+      <v-divider></v-divider>
 
       <v-checkbox
         v-model="form.config.AttachStdin"
@@ -63,19 +75,13 @@
         value="blue"
         hide-details
       ></v-checkbox>
+      <v-divider></v-divider>
 
-      <v-text-field
-        v-model="form.config.WorkingDir"
-        label="Working Directory"
-        dense
-        required
-      ></v-text-field>
-
-      <div class="my-2">
+      <div>
         <h2>Bind Volumes</h2>
         <v-btn
-          class="mx-2"
-          fab
+          class="ma-2"
+          icon
           dark
           small
           color="primary"
@@ -85,8 +91,8 @@
         </v-btn>
 
         <v-btn
-          class="mx-2"
-          fab
+          class="ma-2"
+          icon
           dark
           small
           color="primary"
@@ -94,81 +100,109 @@
         >
           <v-icon dark>mdi-minus</v-icon>
         </v-btn>
-        <div v-for="volume in volumes" :key="volume.index">
+        <div v-for="volume in volumes" :key="volume.index" class="ma-2">
           <v-text-field
             v-model="volume.volume"
             label="Set a new volume"
             dense
+            outlined
             required
           ></v-text-field>
         </div>
+      </div>
+      <v-divider></v-divider>
 
-        <div>
-          <h2>Environments</h2>
-          <v-btn
-            class="mx-2"
-            fab
-            dark
-            small
-            color="primary"
-            @click="addMoreEnv()"
-          >
-            <v-icon dark>mdi-plus</v-icon>
-          </v-btn>
+      <div>
+        <h2>Environments</h2>
+        <v-btn
+          class="ma-2"
+          icon
+          dark
+          small
+          color="primary"
+          @click="addMoreEnv()"
+        >
+          <v-icon dark>mdi-plus</v-icon>
+        </v-btn>
 
-          <v-btn
-            class="mx-2"
-            fab
-            dark
-            small
-            color="primary"
-            @click="removeEnv()"
-          >
-            <v-icon dark>mdi-minus</v-icon>
-          </v-btn>
-          <div v-for="env in envs" :key="env.index">
-            <v-row>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="env.env.key"
-                  label="Set a key"
-                  dense
-                  required
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="6">
-                <v-text-field
-                  v-model="env.env.value"
-                  label="Set a value"
-                  dense
-                  required
-                ></v-text-field>
-              </v-col>
-            </v-row>
-          </div>
-        </div>
-
-        <div>
-          <h2>Commands</h2>
-          <div v-for="command in commands" :key="command.index">
-            <v-text-field
-              v-model="command.command"
-              label="Set a new volume"
-              dense
-              required
-            ></v-text-field>
-          </div>
-          <div class="my-2">
-            <v-btn small color="primary" @click="addMoreCommand()"
-              >Add new Command</v-btn
-            >
-          </div>
+        <v-btn
+          class="ma-2"
+          icon
+          dark
+          small
+          color="primary"
+          @click="removeEnv()"
+        >
+          <v-icon dark>mdi-minus</v-icon>
+        </v-btn>
+        <div v-for="env in envs" :key="env.index" class="ma-2">
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="env.env.key"
+                label="Set a key"
+                dense
+                outlined
+                required
+              ></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6">
+              <v-text-field
+                v-model="env.env.value"
+                label="Set a value"
+                dense
+                outlined
+                required
+              ></v-text-field>
+            </v-col>
+          </v-row>
         </div>
       </div>
+      <v-divider></v-divider>
 
-      <div class="my-2">
-        <v-btn small color="primary" @click="addNewContainer()">Save</v-btn>
+      <div>
+        <h2>Commands</h2>
+        <v-btn
+          class="ma-2"
+          icon
+          dark
+          small
+          color="primary"
+          @click="addMoreCommand()"
+        >
+          <v-icon dark>mdi-plus</v-icon>
+        </v-btn>
+
+        <v-btn
+          class="ma-2"
+          icon
+          dark
+          small
+          color="primary"
+          @click="removeCommand()"
+        >
+          <v-icon dark>mdi-minus</v-icon>
+        </v-btn>
+        <div v-for="command in commands" :key="command.index" class="ma-2">
+          <v-text-field
+            v-model="command.command"
+            label="Set a new volume"
+            dense
+            outlined
+            required
+          ></v-text-field>
+        </div>
       </div>
+      <v-divider></v-divider>
+
+      <v-card-actions>
+        <v-spacer></v-spacer>
+
+        <v-btn color="black" dark @click="eventClose()">
+          Back
+        </v-btn>
+        <v-btn color="primary" dark @click="addNewContainer()">Save</v-btn>
+      </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
@@ -250,6 +284,9 @@ export default {
         command: ""
       });
     },
+    removeCommand() {
+      this.commands.pop();
+    },
     async addNewContainer() {
       if (this.volumes.length > 0) {
         this.volumes.forEach(volume => {
@@ -287,9 +324,25 @@ export default {
         this.notify(result.data.ok, "green");
         this.eventClose();
         this.$store.dispatch("setContainerList", this.id);
+        this.reset();
       } catch (error) {
         this.notify(error.message, "red");
       }
+    },
+    reset() {
+      this.form = {
+        order: "",
+        config: {
+          name: "",
+          Image: "",
+          AttachStdin: false,
+          AttachStdout: false,
+          AttachStderr: false,
+          Tty: false,
+          StdinOnce: false,
+          WorkingDir: ""
+        }
+      };
     }
   }
 };
