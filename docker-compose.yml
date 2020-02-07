@@ -37,6 +37,7 @@ services:
       - 5100
     volumes:
       - .:/usr/src/app
+      - /var/run/docker.sock:/var/run/docker.sock
       - /etc/letsencrypt:/etc/letsencrypt
       - "/etc/localtime:/etc/localtime:ro"
     networks:
