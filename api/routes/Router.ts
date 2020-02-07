@@ -7,6 +7,7 @@ const routes = Router()
 
 routes.use(CheckJwt.checkJwt)
 
+// Deploys
 routes.post(
   '/api/deploy/create',
   cDeploy.store
@@ -17,6 +18,12 @@ routes.delete(
   cDeploy.destroy
 )
 
+routes.get(
+  '/api/deploy/getall',
+  cDeploy.indexAll
+)
+
+// Containers
 routes.post(
   '/api/container/create/:deployId',
   cContainer.store
@@ -27,6 +34,7 @@ routes.delete(
   cContainer.destroy
 )
 
+// WebHook
 routes.post(
   '/api/deploy/webhook/:secret',
   cDocker.deploy
