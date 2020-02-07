@@ -4,7 +4,7 @@ dotenv.config()
 export const smtp = {
   secure: false,
   user: process.env.EMAIL,
-  pass: process.env.PASSWORDSMPT,
+  pass: process.env.PASSSWORDSMTP,
   tls: {
     rejectUnauthorized: false
   }

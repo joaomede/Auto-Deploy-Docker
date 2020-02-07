@@ -24,11 +24,11 @@ export default new class Actions {
       const containerDB = await actions.createNewContaier(dockerode, config)
       await actions.startContainer(containerDB)
     } catch (error) {
-      throw new Error('Error ao tentar implantar container')
+      throw new Error(error.message)
     }
   }
 
-  public async sendEmail (email: string, context: string): Promise<void> {
+  public async sendEmail (email: string, context: string, errorMessage: string): Promise<void> {
     try {
       await mail.sendMail({
         to: email,
@@ -39,7 +39,8 @@ export default new class Actions {
       })
     } catch (error) {
       if (error) {
-        throw new Error('Não foi possível enviar o email')
+        console.log(error)
+        throw new Error(errorMessage)
       }
     }
   }
@@ -55,22 +56,37 @@ export default new class Actions {
         console.log('3 - Inicia sequencia - "no such container"')
         try {
           await actions.noSuchContainer(actions, dockerode, config)
-          await actions.sendEmail(email, 'sucess')
+          await actions.sendEmail(
+            email,
+            `Sucesso na implantação do container ${containerList[index].config.name}`,
+            'Suceso no deploy, Mas o email falhou'
+          )
           console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
         } catch (error) {
           console.log(error.message)
-          await actions.sendEmail(email, error.message)
+          await actions.sendEmail(
+            email,
+            error.message,
+            `Erro na implantação do container ${containerList[index].config.name} e o email falhou`
+          )
           throw new Error(error.message)
         }
       } else {
         console.log('3 - Inicia sequencia - "has Container"')
         try {
           await actions.hasContainer(actions, dockerode, container, infoContainer as ContainerInspectInfo, config)
-          await actions.sendEmail(email, 'sucess')
+          await actions.sendEmail(
+            email,
+            `Sucesso na implantação do container ${containerList[index].config.name}`,
+            'Suceso no deploy, Mas o email falhou')
           console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
         } catch (error) {
+          await actions.sendEmail(
+            email,
+            error.message,
+            `Erro na implantação do container ${containerList[index].config.name} e o email falhou`
+          )
           console.log(error.message)
-          await actions.sendEmail(email, error.message)
           throw new Error(error.message)
         }
       }
@@ -149,7 +165,7 @@ export default new class Actions {
       await docker.getImage(imageName).remove()
       console.log('3 - imagem removida com sucesso')
     } catch (error) {
-      throw new Error('3.e - Problemas ao remover imagem')
+      throw new Error(`3.e - Problemas ao remover imagem ${imageName}`)
     }
   }
 

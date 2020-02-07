@@ -21,7 +21,12 @@ export default new class DeployQuery {
    */
   public async createNewDeploy (userId: number, body: any): Promise<I.Deploy> {
     try {
-      const form = { secret: body.secret, nameProject: body.nameProject, userIdFk: userId }
+      const form = {
+        secret: body.secret,
+        nameProject: body.nameProject,
+        email: body.email,
+        userIdFk: userId
+      }
       await knex('deploys').insert(form)
 
       const deploy: I.Deploy[] = await knex('deploys')
@@ -30,6 +35,7 @@ export default new class DeployQuery {
 
       return deploy[0]
     } catch (error) {
+      console.log(error)
       throw new Error('Error when trying to create new deploy')
     }
   }

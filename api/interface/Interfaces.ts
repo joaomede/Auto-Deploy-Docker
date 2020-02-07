@@ -1,3 +1,5 @@
+import { ContainerCreateOptions } from 'dockerode'
+
 export interface User {
   id?: number
   name?: string
@@ -16,7 +18,7 @@ export interface Deploy {
 export interface Container {
   id?: number
   order?: number
-  config?: object
+  config?: ContainerCreateOptions
   deployIdFk?: number
   userIdFk?: number
 }
