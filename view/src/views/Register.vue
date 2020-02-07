@@ -65,7 +65,7 @@ export default {
         this.$store.dispatch("setLogin", result.data.user);
         this.notify(result.data.ok, "green");
       } catch (error) {
-        this.notify(error.response.data.error);
+        this.notify(error.response.data.error, "red");
       }
     },
     checkLogin() {
