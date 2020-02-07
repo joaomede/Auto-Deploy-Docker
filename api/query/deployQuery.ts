@@ -24,6 +24,9 @@ export default new class DeployQuery {
       const form = {
         secret: body.secret,
         nameProject: body.nameProject,
+        local: body.local,
+        host: body.host,
+        port: body.port,
         email: body.email,
         userIdFk: userId
       }

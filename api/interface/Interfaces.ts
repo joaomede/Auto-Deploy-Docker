@@ -11,6 +11,9 @@ export interface Deploy {
   id?: number
   secret?: string
   email?: string
+  local?: boolean
+  host?: string
+  port?: number
   apiIdFk?: number
   userIdFk?: number
 }
