@@ -11,7 +11,7 @@
 
     <div class="flex-grow-1" />
 
-    <v-btn icon to="login" v-if="this.user.id === null">
+    <v-btn icon to="/login" v-if="this.user.id === null">
       <v-icon>fas fa-sign-in-alt</v-icon>
     </v-btn>
 
