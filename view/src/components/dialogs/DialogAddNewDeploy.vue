@@ -17,6 +17,13 @@
           dense
           required
         ></v-text-field>
+        <v-text-field
+          v-model="form.email"
+          label="Set a Email 'Notification'"
+          outlined
+          dense
+          required
+        ></v-text-field>
       </div>
 
       <v-card-actions>

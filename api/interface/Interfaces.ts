@@ -8,6 +8,7 @@ export interface User {
 export interface Deploy {
   id?: number
   secret?: string
+  email?: string
   apiIdFk?: number
   userIdFk?: number
 }
