@@ -11,21 +11,21 @@
       ></v-text-field>
 
       <v-text-field
-        v-model="form.baseConfig.name"
+        v-model="form.config.name"
         label="Container Name"
         dense
         required
       ></v-text-field>
 
       <v-text-field
-        v-model="form.baseConfig.Image"
+        v-model="form.config.Image"
         label="Image Name"
         dense
         required
       ></v-text-field>
 
       <v-checkbox
-        v-model="form.baseConfig.AttachStdin"
+        v-model="form.config.AttachStdin"
         label="AttachStdin"
         color="blue"
         value="blue"
@@ -33,7 +33,7 @@
       ></v-checkbox>
 
       <v-checkbox
-        v-model="form.baseConfig.AttachStdout"
+        v-model="form.config.AttachStdout"
         label="AttachStdout"
         color="blue"
         value="blue"
@@ -41,7 +41,7 @@
       ></v-checkbox>
 
       <v-checkbox
-        v-model="form.baseConfig.AttachStderr"
+        v-model="form.config.AttachStderr"
         label="AttachStderr"
         color="blue"
         value="blue"
@@ -49,7 +49,7 @@
       ></v-checkbox>
 
       <v-checkbox
-        v-model="form.baseConfig.Tty"
+        v-model="form.config.Tty"
         label="Tty"
         color="blue"
         value="blue"
@@ -57,7 +57,7 @@
       ></v-checkbox>
 
       <v-checkbox
-        v-model="form.baseConfig.StdinOnce"
+        v-model="form.config.StdinOnce"
         label="StdinOnce"
         color="blue"
         value="blue"
@@ -65,7 +65,7 @@
       ></v-checkbox>
 
       <v-text-field
-        v-model="form.baseConfig.WorkingDir"
+        v-model="form.config.WorkingDir"
         label="Working Directory"
         dense
         required
@@ -167,7 +167,7 @@
       </div>
 
       <div class="my-2">
-        <v-btn small color="primary" @click="save()">Save</v-btn>
+        <v-btn small color="primary" @click="addNewContainer()">Save</v-btn>
       </div>
     </v-card>
   </v-dialog>
@@ -178,6 +178,9 @@ export default {
   props: {
     dialog: {
       type: Boolean
+    },
+    id: {
+      type: String
     }
   },
   data() {
@@ -185,7 +188,7 @@ export default {
       newDialog: false,
       form: {
         order: "",
-        baseConfig: {
+        config: {
           name: "",
           Image: "",
           AttachStdin: false,
@@ -247,7 +250,7 @@ export default {
         command: ""
       });
     },
-    save() {
+    async addNewContainer() {
       if (this.volumes.length > 0) {
         this.volumes.forEach(volume => {
           this.volume.push(volume.volume);
@@ -267,13 +270,26 @@ export default {
       }
 
       this.model.order = this.form.order;
-      this.model.config = this.form.baseConfig;
+      this.model.config = this.form.config;
       this.model.config.Cmd = this.command;
       this.model.config.Env = this.env;
       this.model.config.HostConfig = {};
       this.model.config.HostConfig.Binds = this.volume;
 
-      this.$emit("save-container", this.model);
+      try {
+        const result = await this.$axios.post(
+          `/api/container/create/${this.id}`,
+          this.form,
+          {
+            headers: this.user.headers
+          }
+        );
+        this.notify(result.data.ok, "green");
+        this.eventClose();
+        this.$store.dispatch("setContainerList", this.id);
+      } catch (error) {
+        this.notify(error.message, "red");
+      }
     }
   }
 };

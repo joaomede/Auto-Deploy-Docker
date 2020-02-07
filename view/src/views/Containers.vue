@@ -2,6 +2,7 @@
   <div class="centralDiv">
     <DialogAddNewContainer
       :dialog="dialogContainer"
+      :id="id"
       @eventClose="dialogContainer = false"
     />
     <v-btn

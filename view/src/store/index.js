@@ -76,6 +76,9 @@ export default new Vuex.Store({
       } catch (error) {
         console.log("erro ao tentar carregar");
       }
+    },
+    removeContainer(state, index) {
+      Vue.delete(state.containerList, index);
     }
   },
   actions: {
@@ -96,6 +99,9 @@ export default new Vuex.Store({
     },
     setContainerList({ commit }, id) {
       commit("setContainerList", id);
+    },
+    removeContainer({ commit }, index) {
+      commit("removeContainer", index);
     }
   },
   modules: {}
