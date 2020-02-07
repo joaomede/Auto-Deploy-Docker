@@ -14,9 +14,14 @@ export default new class DeployQuery {
     }
   }
 
-  public async createNewDeploy (userId: number, secret: number): Promise<I.Deploy> {
+  /**
+   *
+   * @param userId User ID
+   * @param body Body with "nameProject" and "secret"
+   */
+  public async createNewDeploy (userId: number, body: any): Promise<I.Deploy> {
     try {
-      const form = { secret: secret, userIdFk: userId }
+      const form = { secret: body.secret, nameProject: body.nameProject, userIdFk: userId }
       await knex('deploys').insert(form)
 
       const deploy: I.Deploy[] = await knex('deploys')

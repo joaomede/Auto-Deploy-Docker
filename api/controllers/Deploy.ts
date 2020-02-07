@@ -6,7 +6,7 @@ import query from '../query/deployQuery'
 export default new class Deploy {
   public async store (req: NewRequest, res: Response): Promise<void> {
     try {
-      const newDeploy = await query.createNewDeploy(req.userId, req.body.secret)
+      const newDeploy = await query.createNewDeploy(req.userId, req.body)
       resp.returnSucessObject(res, {
         ok: 'Novo auto deploy criado com sucesso',
         deploy: newDeploy
