@@ -13,4 +13,20 @@ export default new class DeployQuery {
       throw new Error('Erro ao tentar localizar deploy')
     }
   }
+
+  /**
+   * @description This method find all deploy by User ID
+   * @param userId User ID - For search a deploy list
+   */
+  public async findAllDeployByUser (userId: number): Promise<I.Deploy[]> {
+    try {
+      const deploys: I.Deploy[] = await knex('deploys')
+        .where({ userIdFk: userId })
+        .select()
+
+      return deploys
+    } catch (error) {
+      throw new Error('Erro in trying find all deploy by user id')
+    }
+  }
 }()
