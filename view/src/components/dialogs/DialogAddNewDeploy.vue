@@ -10,6 +10,7 @@
           dense
           required
         ></v-text-field>
+
         <v-text-field
           v-model="form.secret"
           label="Set a Secret"
@@ -17,6 +18,32 @@
           dense
           required
         ></v-text-field>
+
+        <v-checkbox
+          v-model="form.local"
+          label="Local Docker?"
+          color="blue"
+          value="blue"
+        ></v-checkbox>
+
+        <v-text-field
+          v-if="!form.local"
+          v-model="form.host"
+          label="Set host for remote docker API, ex.: http://1.1.1.1"
+          outlined
+          dense
+          required
+        ></v-text-field>
+
+        <v-text-field
+          v-if="!form.local"
+          v-model="form.port"
+          label="Set a port for remote docker API. ex.: 5000"
+          outlined
+          dense
+          required
+        ></v-text-field>
+
         <v-text-field
           v-model="form.email"
           label="Set a Email 'Notification'"
@@ -50,7 +77,9 @@ export default {
   data() {
     return {
       dialogComponent: false,
-      form: {}
+      form: {
+        local: false
+      }
     };
   },
   watch: {
