@@ -2,6 +2,12 @@ import { knex } from '../db/connection'
 import * as I from '../interface/Interfaces'
 
 export default new class ContainerQuery {
+  /**
+   * @description Create a new Container Template
+   * @param userId User ID
+   * @param deployId Deploy ID - Relationship
+   * @param form form containers de settings for new container
+   */
   public async createNewContainerTemplate (userId: number, deployId: number, form: any): Promise<I.Container> {
     try {
       const newDeploy: I.Container[] = await knex('containers').insert({

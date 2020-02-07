@@ -20,7 +20,7 @@ export default new class Container {
 
   public async destroy (req: NewRequest, res: Response): Promise<void> {
     try {
-      await containerQuery.deleteContainerById(req.userId, Number(req.params.id))
+      await containerQuery.deleteContainerById(req.userId, Number(req.params.deployId))
       resp.returnSucessMessage(res, 'Container removido com sucesso')
     } catch (error) {
       resp.returnErrorMessage(res, error.message)

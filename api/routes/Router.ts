@@ -30,7 +30,7 @@ routes.post(
 )
 
 routes.delete(
-  '/api/container/delete/:id',
+  '/api/container/delete/:deployId',
   cContainer.destroy
 )
 
