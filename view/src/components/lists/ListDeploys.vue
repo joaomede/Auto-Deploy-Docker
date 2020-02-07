@@ -65,6 +65,9 @@ export default {
         this.notify(error.message, "red");
       }
     },
+    toContainerView(id) {
+      this.$router.push({ name: "Containers", params: { id: "" + id } });
+    },
     showDeleteDeploy(deploy, index) {
       this.dialogDelete = true;
       this.index = index;

@@ -34,9 +34,6 @@ export default {
     this.$store.dispatch("setDeployList");
   },
   methods: {
-    toContainerView(id) {
-      this.$router.push({ name: "Containers", params: { id: "" + id } });
-    },
     addNewDeploy() {
       this.dialogAddNewDeploy = true;
     }
