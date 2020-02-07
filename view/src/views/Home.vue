@@ -3,11 +3,12 @@
     <v-btn absolute dark fab bottom right color="blue" @click="addNewDeploy()">
       <v-icon>mdi-plus</v-icon>
     </v-btn>
+    <DialogAddNewDeploy
+      :dialog="dialogAddNewDeploy"
+      @createdNew="listAllDeploys()"
+      @eventClose="dialogAddNewDeploy = false"
+    />
     <v-container>
-      <DialogAddNewDeploy
-        :dialog="dialogDeploy"
-        @eventClose="dialogDeploy = false"
-      />
       <h2 class="text-center">All Deploys</h2>
       <v-card max-width="600" class="mx-auto">
         <v-list two-line subheader>
@@ -34,31 +35,30 @@ export default {
   },
   data() {
     return {
-      dialogDeploy: false,
-      listDeploys: [
-        {
-          id: 1,
-          nameProject: "System One",
-          secret: "teste"
-        },
-        {
-          id: 2,
-          nameProject: "System Two",
-          secret: "teste"
-        },
-        {
-          id: 3,
-          nameProject: "System Three",
-          secret: "teste"
-        }
-      ]
+      dialogAddNewDeploy: false,
+      listDeploys: []
     };
+  },
+  created() {
+    this.listAllDeploys();
   },
   methods: {
     toContainerView(id) {
       this.$router.push({ name: "Containers", params: { id: "" + id } });
     },
-    addNewDeploy() {},
+    async listAllDeploys() {
+      try {
+        const result = await this.$axios.get("/api/deploy/getall", {
+          headers: this.user.headers
+        });
+        this.listDeploys = result.data;
+      } catch (error) {
+        this.notify(error.response.data.error, "red");
+      }
+    },
+    addNewDeploy() {
+      this.dialogAddNewDeploy = true;
+    },
     teste() {},
     testeTool() {}
   }

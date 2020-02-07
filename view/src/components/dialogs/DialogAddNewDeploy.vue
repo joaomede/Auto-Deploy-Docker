@@ -1,25 +1,33 @@
 <template>
   <div>
-    <v-dialog v-model="dialog" max-width="290">
+    <v-dialog v-model="dialogComponent" max-width="500">
       <v-card>
-        <v-card-title class="headline"
-          >Use Google's location service?</v-card-title
-        >
-
-        <v-card-text>
-          Let Google help apps determine location. This means sending anonymous
-          location data to Google, even when no apps are running.
-        </v-card-text>
+        <v-card-title class="headline">Create New Project Deploy</v-card-title>
+        <div class="mx-2">
+          <v-text-field
+            v-model="form.nameProject"
+            label="Set a Project Name"
+            outlined
+            dense
+            required
+          ></v-text-field>
+          <v-text-field
+            v-model="form.secret"
+            label="Set a Secret"
+            outlined
+            dense
+            required
+          ></v-text-field>
+        </div>
 
         <v-card-actions>
           <v-spacer></v-spacer>
 
-          <v-btn color="green darken-1" text @click="dialog = false">
-            Disagree
+          <v-btn color="black" dark @click="dialogComponent = false">
+            Back
           </v-btn>
-
-          <v-btn color="green darken-1" text @click="dialog = false">
-            Agree
+          <v-btn color="green" dark @click="createNewDeployProject()">
+            Save
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -36,15 +44,38 @@ export default {
   },
   data() {
     return {
-      dialogComponent: false
+      dialogComponent: false,
+      form: {}
     };
   },
   watch: {
-    dialog: "update"
+    dialog: "update",
+    dialogComponent: "close"
   },
   methods: {
     update() {
       this.dialogComponent = this.dialog;
+    },
+    close() {
+      if (this.dialogComponent === false) {
+        this.$emit("eventClose");
+      }
+    },
+    eventClose() {
+      this.dialogComponent = false;
+      this.$emit("eventClose");
+    },
+    async createNewDeployProject() {
+      try {
+        const result = await this.$axios.post("/api/deploy/create", this.form, {
+          headers: this.user.headers
+        });
+        this.notify(result.data.ok, "green");
+        this.eventClose();
+        this.$emit("createdNew");
+      } catch (error) {
+        this.notify(error.message, "red");
+      }
     }
   }
 };

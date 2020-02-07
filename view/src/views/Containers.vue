@@ -74,7 +74,6 @@ export default {
       ]
     };
   },
-  created() {},
   methods: {
     showSettings(id) {
       console.log(id);
