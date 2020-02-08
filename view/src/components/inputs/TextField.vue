@@ -1,25 +1,17 @@
 <template>
-  <ValidationProvider :name="label" :rules="rules" v-slot="{ errors, valid }">
-    <v-text-field
-      v-model="model"
-      :error-messages="errors"
-      :success="valid"
-      outlined
-      rounded
-      dense
-      :label="label"
-      required
-    ></v-text-field>
-  </ValidationProvider>
+  <v-text-field
+    v-model="model"
+    outlined
+    rounded
+    dense
+    :label="label"
+  ></v-text-field>
 </template>
 
 <script>
 export default {
   props: {
     label: {
-      type: String
-    },
-    rules: {
       type: String
     }
   },

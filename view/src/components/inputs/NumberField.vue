@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      model: 1
+      model: ""
     };
   },
   watch: {

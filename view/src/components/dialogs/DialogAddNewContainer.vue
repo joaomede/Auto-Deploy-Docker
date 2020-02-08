@@ -1,103 +1,129 @@
 <template>
   <v-dialog v-model="newDialog" max-width="500">
-    <v-card class="pa-2">
-      <h2 class="text-center">Define a new container template</h2>
+    <ValidationObserver ref="obs" v-slot="{ invalid, validated, passes }">
+      <v-card class="pa-2">
+        <h2 class="text-center">Define a new container template</h2>
 
-      <NumberField label="Order to start" @model="form.order = $event" />
-      <TextField label="Container Name" @model="form.config.name = $event" />
-      <TextField label="Image Name" @model="form.config.Image = $event" />
-      <TextField label="Work Dir." @model="form.config.WorkingDir = $event" />
-      <v-divider></v-divider>
+        <NumberField
+          rules="required"
+          label="Order to start"
+          @model="form.order = $event"
+        />
+        <TextFieldValidate
+          rules="required"
+          label="Container Name"
+          @model="form.config.name = $event"
+        />
+        <TextFieldValidate
+          rules="required"
+          label="Image Name"
+          @model="form.config.Image = $event"
+        />
+        <TextField label="Work Dir." @model="form.config.WorkingDir = $event" />
+        <v-divider></v-divider>
 
-      <CheckBox label="AttachStdin" @model="form.config.AttachStdin = $event" />
-      <CheckBox
-        label="AttachStdout"
-        @model="form.config.AttachStdout = $event"
-      />
-      <CheckBox
-        label="AttachStderr"
-        @model="form.config.AttachStderr = $event"
-      />
-      <CheckBox label="Tty" @model="form.config.Tty = $event" />
-      <CheckBox label="StdinOnce" @model="form.config.StdinOnce = $event" />
-      <v-divider></v-divider>
+        <CheckBox
+          label="AttachStdin"
+          @model="form.config.AttachStdin = $event"
+        />
+        <CheckBox
+          label="AttachStdout"
+          @model="form.config.AttachStdout = $event"
+        />
+        <CheckBox
+          label="AttachStderr"
+          @model="form.config.AttachStderr = $event"
+        />
+        <CheckBox label="Tty" @model="form.config.Tty = $event" />
+        <CheckBox label="StdinOnce" @model="form.config.StdinOnce = $event" />
+        <v-divider></v-divider>
 
-      <div>
-        <h2>Bind Volumes</h2>
-        <PlusButton @eventClick="addMoreVolumes()" />
-        <MinorButton @eventClick="removeVolumes()" />
-        <div v-for="volume in volumes" :key="volume.index" class="ma-2">
-          <v-row>
-            <v-col cols="12" md="6">
-              <TextField
-                label="Host, ex.: /home/documents/project"
-                @model="volume.volume.host = $event"
-              />
-            </v-col>
-            <v-col cols="12" md="6">
-              <TextField
-                label="Container, ex.: /home/document/src"
-                @model="volume.volume.container = $event"
-              />
-            </v-col>
-          </v-row>
+        <div>
+          <h2>Bind Volumes</h2>
+          <PlusButton @eventClick="addMoreVolumes()" />
+          <MinorButton @eventClick="removeVolumes()" />
+          <div v-for="volume in volumes" :key="volume.index" class="ma-2">
+            <v-row>
+              <v-col cols="12" md="6">
+                <TextField
+                  label="Host, ex.: /home/documents/project"
+                  @model="volume.volume.host = $event"
+                />
+              </v-col>
+              <v-col cols="12" md="6">
+                <TextField
+                  label="Container, ex.: /home/document/src"
+                  @model="volume.volume.container = $event"
+                />
+              </v-col>
+            </v-row>
+          </div>
         </div>
-      </div>
-      <v-divider></v-divider>
+        <v-divider></v-divider>
 
-      <div>
-        <h2>Environments</h2>
-        <PlusButton @eventClick="addMoreEnv()" />
-        <MinorButton @eventClick="removeEnv()" />
-        <div v-for="env in envs" :key="env.index" class="ma-2">
-          <v-row>
-            <v-col cols="12" md="6">
-              <TextField label="Key" @model="env.env.key = $event" />
-            </v-col>
-            <v-col cols="12" md="6">
-              <TextField label="Value" @model="env.env.value = $event" />
-            </v-col>
-          </v-row>
+        <div>
+          <h2>Environments</h2>
+          <PlusButton @eventClick="addMoreEnv()" />
+          <MinorButton @eventClick="removeEnv()" />
+          <div v-for="env in envs" :key="env.index" class="ma-2">
+            <v-row>
+              <v-col cols="12" md="6">
+                <TextField label="Key" @model="env.env.key = $event" />
+              </v-col>
+              <v-col cols="12" md="6">
+                <TextField label="Value" @model="env.env.value = $event" />
+              </v-col>
+            </v-row>
+          </div>
         </div>
-      </div>
-      <v-divider></v-divider>
+        <v-divider></v-divider>
 
-      <div>
-        <h2>Commands</h2>
-        <PlusButton @eventClick="addMoreCommand()" />
-        <MinorButton @eventClick="removeCommand()" />
-        <div v-for="command in commands" :key="command.index" class="ma-2">
-          <TextField label="New Command" @model="command.command = $event" />
+        <div>
+          <h2>Commands</h2>
+          <PlusButton @eventClick="addMoreCommand()" />
+          <MinorButton @eventClick="removeCommand()" />
+          <div v-for="command in commands" :key="command.index" class="ma-2">
+            <TextField label="New Command" @model="command.command = $event" />
+          </div>
         </div>
-      </div>
-      <v-divider></v-divider>
+        <v-divider></v-divider>
 
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <BlackButton name="Back" @eventClick="eventClose()" />
-        <GreenButton name="Save" @eventClick="addNewContainer()" />
-      </v-card-actions>
-    </v-card>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <BlackButton name="Back" @eventClick="eventClose()" />
+          <GreenButtonValid
+            :invalid="invalid"
+            :validated="validated"
+            :passes="passes"
+            name="Save"
+            @eventClick="addNewContainer()"
+          />
+        </v-card-actions>
+      </v-card>
+    </ValidationObserver>
   </v-dialog>
 </template>
 
 <script>
 import TextField from "../inputs/TextField";
+import TextFieldValidate from "../inputs/TextFieldValidate";
+
 import NumberField from "../inputs/NumberField";
 import CheckBox from "../inputs/CheckBox";
 import MinorButton from "../button/MinorButton";
 import PlusButton from "../button/PlusButton";
-import GreenButton from "../button/GreenButton";
 import BlackButton from "../button/BlackButton";
+import GreenButtonValid from "../button/GreenButtonValid";
 
 export default {
   components: {
     TextField,
+    TextFieldValidate,
     NumberField,
     CheckBox,
     MinorButton,
     PlusButton,
-    GreenButton,
+    GreenButtonValid,
     BlackButton
   },
   props: {

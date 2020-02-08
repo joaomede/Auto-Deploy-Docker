@@ -4,12 +4,12 @@
       <v-card class="md-2">
         <v-card-title class="headline">Create New Project Deploy</v-card-title>
         <div class="mx-2">
-          <TextField
+          <TextFieldValidate
             label="* Project Name"
             rules="required"
             @model="form.nameProject = $event"
           />
-          <TextField
+          <TextFieldValidate
             rules="required"
             label="* Secret"
             @model="form.secret = $event"
@@ -51,7 +51,8 @@
 </template>
 
 <script>
-import TextField from "../inputs/TextField";
+import TextFieldValidate from "../inputs/TextFieldValidate";
+
 import TextFieldRequired from "../inputs/TextFieldRequired";
 import NumberFieldRequired from "../inputs/NumberFieldRequired";
 
@@ -62,7 +63,7 @@ import BlackButton from "../button/BlackButton";
 
 export default {
   components: {
-    TextField,
+    TextFieldValidate,
     TextFieldRequired,
     NumberFieldRequired,
     Checkbox,
