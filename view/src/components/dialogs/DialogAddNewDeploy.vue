@@ -1,35 +1,45 @@
 <template>
   <v-dialog v-model="dialogComponent" max-width="500">
-    <v-card class="md-2">
-      <v-card-title class="headline">Create New Project Deploy</v-card-title>
-      <div class="mx-2">
-        <TextField label="* Project Name" @model="form.nameProject = $event" />
-        <TextField label="* Secret" @model="form.secret = $event" />
-        <Checkbox label="** Local Docker?" @model="form.local = $event" />
-        <TextField
-          v-if="!form.local"
-          label="** Set host for remote docker API, ex.: http://1.1.1.1"
-          @model="form.host = $event"
-        />
-        <NumberField
-          v-if="!form.local"
-          label="** Set a port for remote docker API. ex.: 5000"
-          @model="form.port = $event"
-        />
-        <EmailField
-          label="* Set a Email 'Notification'"
-          @model="form.email = $event"
-        />
-      </div>
-      <h4>* Fields Required</h4>
-      <h4>** If "local" is disabled, subsequent fields are required</h4>
-
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <BlackButton name="Back" @eventClick="eventClose()" />
-        <GreenButton name="Save" @eventClick="checkFields()" />
-      </v-card-actions>
-    </v-card>
+    <ValidationObserver ref="obs" v-slot="{ invalid, validated, passes }">
+      <v-card class="md-2">
+        <v-card-title class="headline">Create New Project Deploy</v-card-title>
+        <div class="mx-2">
+          <TextField
+            label="* Project Name"
+            @model="form.nameProject = $event"
+          />
+          <TextField label="* Secret" @model="form.secret = $event" />
+          <Checkbox label="** Local Docker?" @model="form.local = $event" />
+          <TextField
+            v-if="!form.local"
+            label="** Set host for remote docker API, ex.: http://1.1.1.1"
+            @model="form.host = $event"
+          />
+          <NumberField
+            v-if="!form.local"
+            label="** Set a port for remote docker API. ex.: 5000"
+            @model="form.port = $event"
+          />
+          <EmailField
+            label="* Set a Email 'Notification'"
+            @model="form.email = $event"
+          />
+        </div>
+        <h4>* Fields Required</h4>
+        <h4>** If "local" is disabled, subsequent fields are required</h4>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <BlackButton name="Back" @eventClick="eventClose()" />
+          <GreenButtonValid
+            :invalid="invalid"
+            :validated="validated"
+            :passes="passes"
+            name="Save"
+            @eventClick="checkFields()"
+          />
+        </v-card-actions>
+      </v-card>
+    </ValidationObserver>
   </v-dialog>
 </template>
 
@@ -38,7 +48,7 @@ import TextField from "../inputs/TextField";
 import NumberField from "../inputs/NumberField";
 import Checkbox from "../inputs/CheckBox";
 import EmailField from "../inputs/EmailField";
-import GreenButton from "../button/GreenButton";
+import GreenButtonValid from "../button/GreenButtonValid";
 import BlackButton from "../button/BlackButton";
 
 export default {
@@ -47,7 +57,7 @@ export default {
     NumberField,
     Checkbox,
     EmailField,
-    GreenButton,
+    GreenButtonValid,
     BlackButton
   },
   props: {
