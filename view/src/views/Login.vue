@@ -18,12 +18,13 @@
               name="Register"
               @eventClick="toRegister()"
             />
-            <v-btn
-              color="primary"
-              @click="passes(login)"
-              :disabled="invalid || !validated"
-              >Login</v-btn
-            >
+            <GreenButtonValid
+              :invalid="invalid"
+              :validated="validated"
+              :passes="passes"
+              name="Login"
+              @eventClick="login()"
+            />
           </v-col>
         </div>
       </v-card>
