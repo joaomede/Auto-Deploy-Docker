@@ -74,11 +74,8 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-
-        <v-btn color="black" dark @click="eventClose()">
-          Back
-        </v-btn>
-        <v-btn color="primary" dark @click="addNewContainer()">Save</v-btn>
+        <BlackButton name="Back" @eventClick="eventClose()" />
+        <GreenButton name="Save" @eventClick="addNewContainer()" />
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -90,13 +87,18 @@ import NumberField from "../inputs/NumberField";
 import CheckBox from "../inputs/CheckBox";
 import MinorButton from "../button/MinorButton";
 import PlusButton from "../button/PlusButton";
+import GreenButton from "../button/GreenButton";
+import BlackButton from "../button/BlackButton";
+
 export default {
   components: {
     TextField,
     NumberField,
     CheckBox,
     MinorButton,
-    PlusButton
+    PlusButton,
+    GreenButton,
+    BlackButton
   },
   props: {
     dialog: {
