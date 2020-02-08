@@ -5,48 +5,43 @@
         Login
       </h2>
       <v-col cols="12" sm="12">
-        <v-text-field
-          v-model="loginForm.email"
-          :rules="[rules.required, rules.email]"
-          label="E-mail"
-        />
+        <EmailField label="E-mail" @model="loginForm.email = $event" />
       </v-col>
 
       <v-col cols="12" sm="12">
-        <v-text-field
-          v-model="loginForm.password"
-          :rules="[rules.required, rules.min]"
-          label="Your Password"
-          type="Password"
-        />
-        <div class="text-center my-2">
-          <v-btn color="black" dark class="ma-2" to="/register">
-            Register
-          </v-btn>
-          <v-btn color="green" dark class="ma-2" @click="login()">
-            Login
-          </v-btn>
-        </div>
+        <PasswordField @model="loginForm.password = $event" />
       </v-col>
+      <div class="text-center">
+        <v-col cols="12">
+          <BlackButton
+            class="mx-2"
+            name="Register"
+            @eventClick="toRegister()"
+          />
+          <GreenButton class="mx-2" name="Login" @eventClick="login()" />
+        </v-col>
+      </div>
     </v-card>
   </div>
 </template>
 
 <script>
+import EmailField from "../components/inputs/EmailField";
+import PasswordField from "../components/inputs/PasswordField";
+import BlackButton from "../components/button/BlackButton";
+import GreenButton from "../components/button/GreenButton";
 export default {
+  components: {
+    EmailField,
+    PasswordField,
+    BlackButton,
+    GreenButton
+  },
   data() {
     return {
       loginForm: {
         email: "",
         password: ""
-      },
-      rules: {
-        min: v => v.length >= 8 || "Min 8 characters",
-        required: value => !!value || "Required.",
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || "Invalid e-mail.";
-        }
       }
     };
   },
@@ -70,6 +65,9 @@ export default {
       if (this.user.id !== null) {
         this.$router.replace("home");
       }
+    },
+    toRegister() {
+      this.$router.replace("/register");
     }
   }
 };
