@@ -6,17 +6,24 @@
         <div class="mx-2">
           <TextField
             label="* Project Name"
+            rules="required"
             @model="form.nameProject = $event"
           />
-          <TextField label="* Secret" @model="form.secret = $event" />
-          <Checkbox label="** Local Docker?" @model="form.local = $event" />
           <TextField
+            rules="required"
+            label="* Secret"
+            @model="form.secret = $event"
+          />
+          <Checkbox label="** Local Docker?" @model="form.local = $event" />
+          <TextFieldRequired
             v-if="!form.local"
+            :rules="{ required }"
             label="** Set host for remote docker API, ex.: http://1.1.1.1"
             @model="form.host = $event"
           />
-          <NumberField
+          <NumberFieldRequired
             v-if="!form.local"
+            :rules="{ required }"
             label="** Set a port for remote docker API. ex.: 5000"
             @model="form.port = $event"
           />
@@ -35,7 +42,7 @@
             :validated="validated"
             :passes="passes"
             name="Save"
-            @eventClick="checkFields()"
+            @eventClick="createNewDeployProject()"
           />
         </v-card-actions>
       </v-card>
@@ -45,7 +52,9 @@
 
 <script>
 import TextField from "../inputs/TextField";
-import NumberField from "../inputs/NumberField";
+import TextFieldRequired from "../inputs/TextFieldRequired";
+import NumberFieldRequired from "../inputs/NumberFieldRequired";
+
 import Checkbox from "../inputs/CheckBox";
 import EmailField from "../inputs/EmailField";
 import GreenButtonValid from "../button/GreenButtonValid";
@@ -54,7 +63,8 @@ import BlackButton from "../button/BlackButton";
 export default {
   components: {
     TextField,
-    NumberField,
+    TextFieldRequired,
+    NumberFieldRequired,
     Checkbox,
     EmailField,
     GreenButtonValid,
@@ -75,12 +85,23 @@ export default {
         host: "",
         port: 8080,
         email: ""
-      }
+      },
+      required: false
     };
   },
   watch: {
     dialog: "update",
-    dialogComponent: "close"
+    dialogComponent: "close",
+    form: {
+      handler(value) {
+        if (value.local === true) {
+          this.required = false;
+        } else {
+          this.required = true;
+        }
+      },
+      deep: true
+    }
   },
   methods: {
     update() {
@@ -94,35 +115,6 @@ export default {
     eventClose() {
       this.dialogComponent = false;
       this.$emit("eventClose");
-    },
-    checkFields() {
-      if (!this.form.nameProject) {
-        this.notify("Field Name Project is Required", "red");
-        return;
-      }
-
-      if (!this.form.secret) {
-        this.notify("Field Secret is Required", "red");
-        return;
-      }
-
-      if (!this.form.local) {
-        if (!this.form.host) {
-          this.notify("Field Host is Required", "red");
-          return;
-        }
-        if (!this.form.port) {
-          this.notify("Field Port is Required", "red");
-          return;
-        }
-      }
-
-      if (!this.form.email) {
-        this.notify("Field Email is Required", "red");
-        return;
-      }
-
-      this.createNewDeployProject();
     },
     async createNewDeployProject() {
       try {
