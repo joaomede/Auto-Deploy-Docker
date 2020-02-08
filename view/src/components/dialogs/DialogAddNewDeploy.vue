@@ -3,78 +3,52 @@
     <v-card class="md-2">
       <v-card-title class="headline">Create New Project Deploy</v-card-title>
       <div class="mx-2">
-        <v-text-field
-          v-model="form.nameProject"
-          label="Set a Project Name"
-          outlined
-          dense
-          rounded
-          required
-        ></v-text-field>
-
-        <v-text-field
-          v-model="form.secret"
-          label="Set a Secret"
-          outlined
-          dense
-          rounded
-          required
-        ></v-text-field>
-
-        <v-checkbox
-          v-model="form.local"
-          label="Local Docker?"
-          color="blue"
-        ></v-checkbox>
-
-        <v-text-field
+        <TextField label="Project Name" @model="form.nameProject = $event" />
+        <TextField label="Secret" @model="form.secret = $event" />
+        <TextField label="Project Name" @model="form.nameProject = $event" />
+        <Checkbox label="Local Docker?" @model="form.local = $event" />
+        <TextField
           v-if="!form.local"
-          v-model="form.host"
           label="Set host for remote docker API, ex.: http://1.1.1.1"
-          outlined
-          dense
-          rounded
-          required
-        ></v-text-field>
-
-        <v-text-field
+          @model="form.host = $event"
+        />
+        <NumberField
           v-if="!form.local"
-          v-model="form.port"
-          type="number"
           label="Set a port for remote docker API. ex.: 5000"
-          outlined
-          rounded
-          dense
-          required
-        ></v-text-field>
-
-        <v-text-field
-          v-model="form.email"
+          @model="form.port = $event"
+        />
+        <EmailField
           label="Set a Email 'Notification'"
-          outlined
-          rounded
-          :rules="[rules.required, rules.email]"
-          dense
-          required
-        ></v-text-field>
+          @model="form.email = $event"
+        />
       </div>
 
       <v-card-actions>
         <v-spacer></v-spacer>
-
-        <v-btn color="black" dark @click="dialogComponent = false">
-          Back
-        </v-btn>
-        <v-btn color="green" dark @click="createNewDeployProject()">
-          Save
-        </v-btn>
+        <BlackButton name="Back" @eventClick="eventClose()" />
+        <GreenButton name="Save" @eventClick="createNewDeployProject()" />
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script>
+import TextField from "../inputs/TextField";
+import NumberField from "../inputs/NumberField";
+import Checkbox from "../inputs/CheckBox";
+import EmailField from "../inputs/EmailField";
+import GreenButton from "../button/GreenButton";
+import BlackButton from "../button/BlackButton";
+
 export default {
+  components: {
+    TextField,
+    NumberField,
+    Checkbox,
+    EmailField,
+    GreenButton,
+    BlackButton
+  },
   props: {
     dialog: {
       type: Boolean
@@ -87,14 +61,6 @@ export default {
         local: false,
         host: "",
         port: 8080
-      },
-      rules: {
-        required: value => !!value || "Required.",
-        counter: value => value.length <= 20 || "Max 20 characters",
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || "Invalid e-mail.";
-        }
       }
     };
   },
