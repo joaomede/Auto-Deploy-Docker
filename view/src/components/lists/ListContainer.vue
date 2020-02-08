@@ -20,7 +20,7 @@
                 v-text="container.config.name"
               ></v-list-item-title>
               <v-list-item-subtitle
-                v-text="`Order: ${container.config.name}`"
+                v-text="`Order: ${container.order}`"
               ></v-list-item-subtitle>
             </v-list-item-content>
 
