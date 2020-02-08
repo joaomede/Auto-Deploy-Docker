@@ -1,7 +1,7 @@
 <template>
   <v-text-field
     v-model="model"
-    label="Order to start"
+    :label="label"
     type="number"
     dense
     outlined
@@ -24,8 +24,7 @@ export default {
   },
   watch: {
     model(value) {
-      console.log(value);
-      // this.$emit("model", value);
+      this.$emit("model", value);
     }
   }
 };
