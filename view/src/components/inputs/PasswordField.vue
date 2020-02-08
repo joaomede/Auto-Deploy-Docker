@@ -1,13 +1,21 @@
 <template>
-  <v-text-field
-    v-model="model"
-    :rules="[rules.required, rules.min]"
-    outlined
-    rounded
-    dense
-    label="Your Password"
-    type="Password"
-  />
+  <ValidationProvider
+    name="password"
+    rules="required"
+    v-slot="{ errors, valid }"
+  >
+    <v-text-field
+      v-model="model"
+      :error-messages="errors"
+      :success="valid"
+      label="Password"
+      type="password"
+      outlined
+      rounded
+      dense
+      required
+    ></v-text-field>
+  </ValidationProvider>
 </template>
 
 <script>
@@ -19,11 +27,7 @@ export default {
   },
   data() {
     return {
-      model: "",
-      rules: {
-        min: v => v.length >= 8 || "Min 8 characters",
-        required: value => !!value || "Required."
-      }
+      model: ""
     };
   },
   watch: {

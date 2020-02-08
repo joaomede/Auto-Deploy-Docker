@@ -2,47 +2,14 @@
   <ValidationObserver ref="obs" v-slot="{ invalid, validated, passes }">
     <div class="centralDiv">
       <v-card class="ma-2">
-        <v-form>
-          <h2 class="text-center">
-            Login
-          </h2>
-          <v-col cols="12" sm="12">
-            <ValidationProvider
-              name="email"
-              rules="required|email"
-              v-slot="{ errors, valid }"
-            >
-              <v-text-field
-                v-model="loginForm.email"
-                :error-messages="errors"
-                :success="valid"
-                outlined
-                rounded
-                dense
-                label="E-mail"
-                required
-              ></v-text-field>
-            </ValidationProvider>
-          </v-col>
-        </v-form>
+        <h2 class="text-center">
+          Login
+        </h2>
         <v-col cols="12" sm="12">
-          <ValidationProvider
-            name="password"
-            rules="required"
-            v-slot="{ errors, valid }"
-          >
-            <v-text-field
-              v-model="loginForm.password"
-              :error-messages="errors"
-              :success="valid"
-              label="Password"
-              type="password"
-              outlined
-              rounded
-              dense
-              required
-            ></v-text-field>
-          </ValidationProvider>
+          <EmailField label="Email" @model="loginForm.email = $event" />
+        </v-col>
+        <v-col cols="12" sm="12">
+          <PasswordField @model="loginForm.password = $event" />
         </v-col>
         <div class="text-center">
           <v-col cols="12">
@@ -66,13 +33,14 @@
 
 <script>
 import BlackButton from "../components/button/BlackButton";
-import { ValidationObserver, ValidationProvider } from "vee-validate";
+import EmailField from "../components/inputs/EmailField";
+import PasswordField from "../components/inputs/PasswordField";
 
 export default {
   components: {
     BlackButton,
-    ValidationProvider,
-    ValidationObserver
+    EmailField,
+    PasswordField
   },
   data() {
     return {

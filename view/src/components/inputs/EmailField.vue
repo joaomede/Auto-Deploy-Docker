@@ -1,13 +1,20 @@
 <template>
-  <v-text-field
-    v-model="model"
-    :label="label"
-    outlined
-    rounded
-    :rules="[rules.required, rules.email]"
-    dense
-    required
-  ></v-text-field>
+  <ValidationProvider
+    name="Email"
+    rules="required|email"
+    v-slot="{ errors, valid }"
+  >
+    <v-text-field
+      v-model="model"
+      :error-messages="errors"
+      :success="valid"
+      outlined
+      rounded
+      dense
+      :label="label"
+      required
+    ></v-text-field>
+  </ValidationProvider>
 </template>
 
 <script>
@@ -19,14 +26,7 @@ export default {
   },
   data() {
     return {
-      model: "",
-      rules: {
-        required: value => !!value || "Required.",
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || "Invalid e-mail.";
-        }
-      }
+      model: ""
     };
   },
   watch: {

@@ -9,7 +9,10 @@ import "./css/style.css";
 import VueCookies from "vue-cookies";
 import mixinsComputed from "./mixins/mixin";
 import "./plugins/vee-validate";
+import { ValidationObserver, ValidationProvider } from "vee-validate";
 
+Vue.component("ValidationProvider", ValidationProvider);
+Vue.component("ValidationObserver", ValidationObserver);
 Vue.mixin(mixinsComputed);
 Vue.use(VueCookies);
 Vue.use(axios);
