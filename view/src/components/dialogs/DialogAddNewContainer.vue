@@ -3,157 +3,59 @@
     <v-card class="pa-2">
       <h2 class="text-center">Define a new container template</h2>
 
-      <v-text-field
-        v-model="form.order"
-        label="Order to start"
-        dense
-        outlined
-        required
-      ></v-text-field>
-
-      <v-text-field
-        v-model="form.config.name"
-        label="Container Name"
-        dense
-        outlined
-        required
-      ></v-text-field>
-
-      <v-text-field
-        v-model="form.config.Image"
-        label="Image Name"
-        dense
-        outlined
-        required
-      ></v-text-field>
-
-      <v-text-field
-        v-model="form.config.WorkingDir"
-        label="Working Directory"
-        dense
-        outlined
-        required
-      ></v-text-field>
+      <NumberField label="Order to start" @model="form.order = $event" />
+      <TextField label="Container Name" @model="form.config.name = $event" />
+      <TextField label="Image Name" @model="form.config.Image = $event" />
+      <TextField label="Work Dir." @model="form.config.WorkingDir = $event" />
       <v-divider></v-divider>
 
-      <v-checkbox
-        v-model="form.config.AttachStdin"
-        label="AttachStdin"
-        color="blue"
-        value="blue"
-        hide-details
-      ></v-checkbox>
-
-      <v-checkbox
-        v-model="form.config.AttachStdout"
+      <CheckBox label="AttachStdin" @model="form.config.AttachStdin = $event" />
+      <CheckBox
         label="AttachStdout"
-        color="blue"
-        value="blue"
-        hide-details
-      ></v-checkbox>
-
-      <v-checkbox
-        v-model="form.config.AttachStderr"
+        @model="form.config.AttachStdout = $event"
+      />
+      <CheckBox
         label="AttachStderr"
-        color="blue"
-        value="blue"
-        hide-details
-      ></v-checkbox>
-
-      <v-checkbox
-        v-model="form.config.Tty"
-        label="Tty"
-        color="blue"
-        value="blue"
-        hide-details
-      ></v-checkbox>
-
-      <v-checkbox
-        v-model="form.config.StdinOnce"
-        label="StdinOnce"
-        color="blue"
-        value="blue"
-        hide-details
-      ></v-checkbox>
+        @model="form.config.AttachStderr = $event"
+      />
+      <CheckBox label="Tty" @model="form.config.Tty = $event" />
+      <CheckBox label="StdinOnce" @model="form.config.StdinOnce = $event" />
       <v-divider></v-divider>
 
       <div>
         <h2>Bind Volumes</h2>
-        <v-btn
-          class="ma-2"
-          icon
-          dark
-          small
-          color="primary"
-          @click="addMoreVolumes()"
-        >
-          <v-icon dark>mdi-plus</v-icon>
-        </v-btn>
-
-        <v-btn
-          class="ma-2"
-          icon
-          dark
-          small
-          color="primary"
-          @click="removeVolumes()"
-        >
-          <v-icon dark>mdi-minus</v-icon>
-        </v-btn>
+        <PlusButton @eventClick="addMoreVolumes()" />
+        <MinorButton @eventClick="removeVolumes()" />
         <div v-for="volume in volumes" :key="volume.index" class="ma-2">
-          <v-text-field
-            v-model="volume.volume"
-            label="Set a new volume"
-            dense
-            outlined
-            required
-          ></v-text-field>
+          <v-row>
+            <v-col cols="12" md="6">
+              <TextField
+                label="Host, ex.: /home/documents/project"
+                @model="volume.volume.host = $event"
+              />
+            </v-col>
+            <v-col cols="12" md="6">
+              <TextField
+                label="Container, ex.: /home/document/src"
+                @model="volume.volume.container = $event"
+              />
+            </v-col>
+          </v-row>
         </div>
       </div>
       <v-divider></v-divider>
 
       <div>
         <h2>Environments</h2>
-        <v-btn
-          class="ma-2"
-          icon
-          dark
-          small
-          color="primary"
-          @click="addMoreEnv()"
-        >
-          <v-icon dark>mdi-plus</v-icon>
-        </v-btn>
-
-        <v-btn
-          class="ma-2"
-          icon
-          dark
-          small
-          color="primary"
-          @click="removeEnv()"
-        >
-          <v-icon dark>mdi-minus</v-icon>
-        </v-btn>
+        <PlusButton @eventClick="addMoreEnv()" />
+        <MinorButton @eventClick="removeEnv()" />
         <div v-for="env in envs" :key="env.index" class="ma-2">
           <v-row>
             <v-col cols="12" md="6">
-              <v-text-field
-                v-model="env.env.key"
-                label="Set a key"
-                dense
-                outlined
-                required
-              ></v-text-field>
+              <TextField label="Key" @model="env.env.key = $event" />
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field
-                v-model="env.env.value"
-                label="Set a value"
-                dense
-                outlined
-                required
-              ></v-text-field>
+              <TextField label="Value" @model="env.env.value = $event" />
             </v-col>
           </v-row>
         </div>
@@ -162,35 +64,10 @@
 
       <div>
         <h2>Commands</h2>
-        <v-btn
-          class="ma-2"
-          icon
-          dark
-          small
-          color="primary"
-          @click="addMoreCommand()"
-        >
-          <v-icon dark>mdi-plus</v-icon>
-        </v-btn>
-
-        <v-btn
-          class="ma-2"
-          icon
-          dark
-          small
-          color="primary"
-          @click="removeCommand()"
-        >
-          <v-icon dark>mdi-minus</v-icon>
-        </v-btn>
+        <PlusButton @eventClick="addMoreCommand()" />
+        <MinorButton @eventClick="removeCommand()" />
         <div v-for="command in commands" :key="command.index" class="ma-2">
-          <v-text-field
-            v-model="command.command"
-            label="Set a new volume"
-            dense
-            outlined
-            required
-          ></v-text-field>
+          <TextField label="New Command" @model="command.command = $event" />
         </div>
       </div>
       <v-divider></v-divider>
@@ -208,7 +85,19 @@
 </template>
 
 <script>
+import TextField from "../inputs/TextField";
+import NumberField from "../inputs/NumberField";
+import CheckBox from "../inputs/CheckBox";
+import MinorButton from "../button/MinorButton";
+import PlusButton from "../button/PlusButton";
 export default {
+  components: {
+    TextField,
+    NumberField,
+    CheckBox,
+    MinorButton,
+    PlusButton
+  },
   props: {
     dialog: {
       type: Boolean
@@ -290,7 +179,7 @@ export default {
     async addNewContainer() {
       if (this.volumes.length > 0) {
         this.volumes.forEach(volume => {
-          this.volume.push(volume.volume);
+          this.volume.push(volume.volume.container + ":" + volume.volume.host);
         });
       }
 
