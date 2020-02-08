@@ -1,41 +1,78 @@
 <template>
-  <div class="centralDiv">
-    <v-card class="ma-2">
-      <h2 class="text-center">
-        Login
-      </h2>
-      <v-col cols="12" sm="12">
-        <EmailField label="E-mail" @model="loginForm.email = $event" />
-      </v-col>
-
-      <v-col cols="12" sm="12">
-        <PasswordField @model="loginForm.password = $event" />
-      </v-col>
-      <div class="text-center">
-        <v-col cols="12">
-          <BlackButton
-            class="mx-2"
-            name="Register"
-            @eventClick="toRegister()"
-          />
-          <GreenButton class="mx-2" name="Login" @eventClick="login()" />
+  <ValidationObserver ref="obs" v-slot="{ invalid, validated, passes }">
+    <div class="centralDiv">
+      <v-card class="ma-2">
+        <v-form>
+          <h2 class="text-center">
+            Login
+          </h2>
+          <v-col cols="12" sm="12">
+            <ValidationProvider
+              name="email"
+              rules="required|email"
+              v-slot="{ errors, valid }"
+            >
+              <v-text-field
+                v-model="loginForm.email"
+                :error-messages="errors"
+                :success="valid"
+                outlined
+                rounded
+                dense
+                label="E-mail"
+                required
+              ></v-text-field>
+            </ValidationProvider>
+          </v-col>
+        </v-form>
+        <v-col cols="12" sm="12">
+          <ValidationProvider
+            name="password"
+            rules="required"
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="loginForm.password"
+              :error-messages="errors"
+              :success="valid"
+              label="Password"
+              type="password"
+              outlined
+              rounded
+              dense
+              required
+            ></v-text-field>
+          </ValidationProvider>
         </v-col>
-      </div>
-    </v-card>
-  </div>
+        <div class="text-center">
+          <v-col cols="12">
+            <BlackButton
+              class="mx-2"
+              name="Register"
+              @eventClick="toRegister()"
+            />
+            <v-btn
+              color="primary"
+              @click="passes(login)"
+              :disabled="invalid || !validated"
+              >Login</v-btn
+            >
+          </v-col>
+        </div>
+      </v-card>
+    </div>
+  </ValidationObserver>
 </template>
 
 <script>
-import EmailField from "../components/inputs/EmailField";
-import PasswordField from "../components/inputs/PasswordField";
 import BlackButton from "../components/button/BlackButton";
-import GreenButton from "../components/button/GreenButton";
+import { ValidationObserver, ValidationProvider } from "vee-validate";
+
 export default {
   components: {
-    EmailField,
-    PasswordField,
     BlackButton,
-    GreenButton
+    ValidationProvider,
+    ValidationObserver
   },
   data() {
     return {

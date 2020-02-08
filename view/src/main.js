@@ -8,6 +8,7 @@ import axios from "./plugins/axios";
 import "./css/style.css";
 import VueCookies from "vue-cookies";
 import mixinsComputed from "./mixins/mixin";
+import "./plugins/vee-validate";
 
 Vue.mixin(mixinsComputed);
 Vue.use(VueCookies);
