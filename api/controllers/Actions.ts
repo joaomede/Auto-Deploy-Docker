@@ -52,6 +52,7 @@ export default new class Actions {
           deploy.email,
           message[1],
           'Falha no deploy, e o mail falhou')
+        throw new Error(message[1])
       } else {
         message[1] = '2 - Inicia sequencia - "has Container"'
         console.log(message[1])
