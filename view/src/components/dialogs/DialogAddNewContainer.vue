@@ -5,6 +5,7 @@
         <h2 class="text-center">Define a new container template</h2>
 
         <NumberField
+          :form="form"
           rules="required"
           label="Order to start"
           @model="form.order = $event"
@@ -47,13 +48,13 @@
               <v-col cols="12" md="6">
                 <TextField
                   label="Host, ex.: /home/documents/project"
-                  @model="volume.volume.host = $event"
+                  @model="volume.host = $event"
                 />
               </v-col>
               <v-col cols="12" md="6">
                 <TextField
                   label="Container, ex.: /home/document/src"
-                  @model="volume.volume.container = $event"
+                  @model="volume.container = $event"
                 />
               </v-col>
             </v-row>
@@ -68,10 +69,10 @@
           <div v-for="env in envs" :key="env.index" class="ma-2">
             <v-row>
               <v-col cols="12" md="6">
-                <TextField label="Key" @model="env.env.key = $event" />
+                <TextField label="Key" @model="env.key = $event" />
               </v-col>
               <v-col cols="12" md="6">
-                <TextField label="Value" @model="env.env.value = $event" />
+                <TextField label="Value" @model="env.value = $event" />
               </v-col>
             </v-row>
           </div>
@@ -138,7 +139,7 @@ export default {
     return {
       newDialog: false,
       form: {
-        order: "",
+        order: 1,
         config: {
           name: "",
           Image: "",
@@ -170,12 +171,12 @@ export default {
     },
     close() {
       if (this.newDialog === false) {
-        this.$emit("eventClose");
+        this.eventClose();
       }
     },
     eventClose() {
-      this.newDialog = false;
       this.$emit("eventClose");
+      this.reset();
     },
     addMoreVolumes() {
       this.volumes.push({
@@ -206,23 +207,25 @@ export default {
     },
     async addNewContainer() {
       if (this.volumes.length > 0) {
+        this.volume = [];
         this.volumes.forEach(volume => {
-          this.volume.push(volume.volume.container + ":" + volume.volume.host);
+          this.volume.push(volume.container + ":" + volume.host);
         });
       }
 
       if (this.envs.length > 0) {
+        this.env = [];
         this.envs.forEach(env => {
-          this.env.push(env.env.key + "=" + env.env.value);
+          this.env.push(env.key + "=" + env.value);
         });
       }
 
       if (this.commands.length > 0) {
+        this.command = [];
         this.commands.forEach(command => {
           this.command.push(command.command);
         });
       }
-
       this.model.order = this.form.order;
       this.model.config = this.form.config;
       this.model.config.Cmd = this.command;
@@ -241,14 +244,13 @@ export default {
         this.notify(result.data.ok, "green");
         this.eventClose();
         this.$store.dispatch("setContainerList", this.id);
-        this.reset();
       } catch (error) {
         this.notify(error.message, "red");
       }
     },
     reset() {
       this.form = {
-        order: "",
+        order: 1,
         config: {
           name: "",
           Image: "",
@@ -260,6 +262,8 @@ export default {
           WorkingDir: ""
         }
       };
+      this.model = {};
+      console.log(this.form);
     }
   }
 };
