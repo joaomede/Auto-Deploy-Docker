@@ -12,10 +12,17 @@
       @saveEdit="saveEdit()"
       @eventClose="dialogEditDeploy = false"
     />
+
+    <ShowDeployOptions
+      :deploy="deploy"
+      :dialog="dialogShowDeployOptions"
+      @eventClose="dialogShowDeployOptions = false"
+    />
+
     <v-list-item
       v-for="(deploy, index) in cDeployList"
       :key="deploy.id"
-      @click="toContainerView(deploy.id)"
+      @click="showDeployOptions(deploy)"
     >
       <v-list-item>
         <v-list-item-content>
@@ -42,16 +49,18 @@
 <script>
 import DialogDelete from "../dialogs/DialogDelete";
 import DialogEditDeploy from "../dialogs/DialogEditDeploy";
-
+import ShowDeployOptions from "../dialogs/ShowDeployOptions";
 export default {
   components: {
     DialogDelete,
-    DialogEditDeploy
+    DialogEditDeploy,
+    ShowDeployOptions
   },
   data() {
     return {
       dialogDelete: false,
       dialogEditDeploy: false,
+      dialogShowDeployOptions: false,
       newDeploy: {
         nameProject: "",
         secret: ""
@@ -79,6 +88,10 @@ export default {
     showDeleteDeploy(deploy, index) {
       this.dialogDelete = true;
       this.index = index;
+      this.deploy = deploy;
+    },
+    showDeployOptions(deploy) {
+      this.dialogShowDeployOptions = true;
       this.deploy = deploy;
     },
     showEditDeploy(deploy, index) {
