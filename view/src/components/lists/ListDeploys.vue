@@ -4,8 +4,13 @@
       :dialog="dialogDelete"
       :item="deploy"
       title="Do you really delete this item?"
-      @removeItem="deleteDeploy()"
       @eventClose="dialogDelete = false"
+    />
+    <DialogEditDeploy
+      :deploy="deploy"
+      :dialog="dialogEditDeploy"
+      @saveEdit="saveEdit()"
+      @eventClose="dialogEditDeploy = false"
     />
     <v-list-item
       v-for="(deploy, index) in cDeployList"
@@ -19,7 +24,7 @@
         </v-list-item-content>
 
         <v-list-item-action>
-          <v-btn icon @click.stop="showDeleteDeploy(deploy, index)">
+          <v-btn icon @click.stop="showEditDeploy(deploy, index)">
             <v-icon color="red lighten">fas fa-edit</v-icon>
           </v-btn>
         </v-list-item-action>
@@ -36,14 +41,17 @@
 
 <script>
 import DialogDelete from "../dialogs/DialogDelete";
+import DialogEditDeploy from "../dialogs/DialogEditDeploy";
 
 export default {
   components: {
-    DialogDelete
+    DialogDelete,
+    DialogEditDeploy
   },
   data() {
     return {
       dialogDelete: false,
+      dialogEditDeploy: false,
       newDeploy: {
         nameProject: "",
         secret: ""
@@ -72,6 +80,11 @@ export default {
       this.dialogDelete = true;
       this.index = index;
       this.deploy = deploy;
+    },
+    showEditDeploy(deploy, index) {
+      this.dialogEditDeploy = true;
+      this.index = index;
+      this.deploy = Object.assign({}, this.deploy, deploy);
     }
   }
 };
