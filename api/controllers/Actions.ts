@@ -1,88 +1,77 @@
 import { Stream } from 'stream'
 import { ContainerCreateOptions, Container, ContainerInspectInfo } from 'dockerode'
 import * as I from '../interface/Interfaces'
-import mail from '../modules/Mailer'
-import { smtp } from '../config/smtp'
+import pluginMail from '../modules/SendMail'
 import Dockerode = require('dockerode')
 
 export default new class Actions {
-  public async noSuchContainer (actions: Actions, dockerode: Dockerode, config: ContainerCreateOptions): Promise<void> {
-    try {
-      await actions.pullImage(dockerode, config.Image)
-      const containerDB = await actions.createNewContaier(dockerode, config)
-      await actions.startContainer(containerDB)
-    } catch (error) {
-      throw new Error('Error ao tentar implantar container')
-    }
-  }
-
-  public async hasContainer (actions: Actions, dockerode: Dockerode, container: Container, infoContainer: ContainerInspectInfo, config: ContainerCreateOptions): Promise<void> {
-    try {
-      await actions.stopAndRemoveContainer(container)
-      await actions.removeImage(dockerode, infoContainer.Image)
-      await actions.pullImage(dockerode, config.Image)
-      const containerDB = await actions.createNewContaier(dockerode, config)
-      await actions.startContainer(containerDB)
-    } catch (error) {
-      throw new Error(error.message)
-    }
-  }
-
-  public async sendEmail (email: string, context: string, errorMessage: string): Promise<void> {
-    try {
-      await mail.sendMail({
-        to: email,
-        from: `"Auto Deploy" <${smtp.user}>`,
-        subject: 'Auto Deploy Docker Result',
-        text: context,
-        html: `<div>${context}<div>`
-      })
-    } catch (error) {
-      if (error) {
-        console.log(error)
-        throw new Error(errorMessage)
-      }
-    }
-  }
-
-  public async startDeployRoutine (actions: Actions, containerList: I.Container[], email: string): Promise<void> {
+  public async startDeployRoutine (actions: Actions, containerList: I.Container[], deploy: I.Deploy): Promise<void> {
     for (let index = 0; index < containerList.length; index++) {
+      let message = []
       const config = containerList[index].config as ContainerCreateOptions
-      const dockerode = new Dockerode({ socketPath: '/var/run/docker.sock' })
+      const dockerode = actions.createInstance(deploy)
+
       const container = actions.containerObject(dockerode, config.name)
+      message[0] = '1 - inspeciona container'
+      console.log(message[0])
+
       const infoContainer = await actions.inspectContainer(container)
 
       if (infoContainer === 'no such container') {
-        console.log('3 - Inicia sequencia - "no such container"')
+        message[1] = '2.e - O container não existe'
+        message[2] = '3 - Inicia sequencia - "no such container"'
+        console.log(message[1])
+
         try {
-          await actions.noSuchContainer(actions, dockerode, config)
-          await actions.sendEmail(
-            email,
-            `Sucesso na implantação do container ${containerList[index].config.name}`,
+          const messages = await actions.noSuchContainer(actions, dockerode, config)
+          message = message.concat(messages)
+
+          let htmlNotification = ''
+          message.forEach(step => {
+            htmlNotification = htmlNotification + step + '<br>'
+          })
+          await pluginMail.sendEmail(
+            deploy.email,
+            `Sucesso na implantação do container ${containerList[index].config.name},<br>Relatório:<br> ${htmlNotification}`,
             'Suceso no deploy, Mas o email falhou'
           )
           console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
         } catch (error) {
           console.log(error.message)
-          await actions.sendEmail(
-            email,
+          await pluginMail.sendEmail(
+            deploy.email,
             error.message,
             `Erro na implantação do container ${containerList[index].config.name} e o email falhou`
           )
           throw new Error(error.message)
         }
+      } else if (infoContainer === undefined) {
+        message[1] = 'Erro na implantação, não foi possível inspecionar o container, provavel problema com docker ou conexão remota'
+        console.log(message[1])
+        await pluginMail.sendEmail(
+          deploy.email,
+          message[1],
+          'Falha no deploy, e o mail falhou')
       } else {
-        console.log('3 - Inicia sequencia - "has Container"')
+        message[1] = '2 - Inicia sequencia - "has Container"'
+        console.log(message[1])
+
         try {
-          await actions.hasContainer(actions, dockerode, container, infoContainer as ContainerInspectInfo, config)
-          await actions.sendEmail(
-            email,
-            `Sucesso na implantação do container ${containerList[index].config.name}`,
+          const messages = await actions.hasContainer(actions, dockerode, container, infoContainer as ContainerInspectInfo, config)
+          message = message.concat(messages)
+
+          let htmlNotification = ''
+          message.forEach(step => {
+            htmlNotification = htmlNotification + step + '<br>'
+          })
+          await pluginMail.sendEmail(
+            deploy.email,
+            `Sucesso na implantação do container ${containerList[index].config.name},<br>Relatório:<br> ${htmlNotification}`,
             'Suceso no deploy, Mas o email falhou')
           console.log(`IMPLANTAÇÃO NUMERO: ${containerList[index].order} CONCLUÍDA`)
         } catch (error) {
-          await actions.sendEmail(
-            email,
+          await pluginMail.sendEmail(
+            deploy.email,
             error.message,
             `Erro na implantação do container ${containerList[index].config.name} e o email falhou`
           )
@@ -90,15 +79,80 @@ export default new class Actions {
           throw new Error(error.message)
         }
       }
+    }
+  }
+
+  public async noSuchContainer (actions: Actions, dockerode: Dockerode, config: ContainerCreateOptions): Promise<void | string[]> {
+    const message = []
+    try {
+      message[0] = '4 - Iniciando download...'
+      console.log(message[0])
+      await actions.pullImage(dockerode, config.Image)
+      message[1] = '4.1 - Download da imagem concluído'
+      console.log(message[1])
+      const containerDB = await actions.createNewContaier(dockerode, config)
+      message[2] = '5 - recriou o container'
+      console.log(message[2])
+      await actions.startContainer(containerDB)
+      message[3] = '6 - iniciou o novo container'
+      console.log(message[3])
+      return message
+    } catch (error) {
+      throw new Error('Error ao tentar implantar container')
+    }
+  }
+
+  public async hasContainer (actions: Actions, dockerode: Dockerode, container: Container, infoContainer: ContainerInspectInfo, config: ContainerCreateOptions): Promise<string[]> {
+    let message = []
+    const download = []
+    const messageContainer = []
+    try {
+      const stopContainerMessages = await actions.stopAndRemoveContainer(container)
+      message = message.concat(stopContainerMessages)
+
+      const removeImageMessages = await actions.removeImage(dockerode, infoContainer.Image)
+      message = message.concat(removeImageMessages)
+
+      download[0] = '5 - Iniciando download...'
+      console.log(download[0])
+
+      await actions.pullImage(dockerode, config.Image)
+      download[1] = '5.1 - Download da imagem concluído'
+      console.log(download[1])
+      message = message.concat(download)
+
+      const containerDB = await actions.createNewContaier(dockerode, config)
+      messageContainer[0] = '6 - recriou o container'
+      console.log(messageContainer[0])
+
+      await actions.startContainer(containerDB)
+      messageContainer[1] = '7 - iniciou o novo container'
+      message = message.concat(messageContainer)
+      console.log(messageContainer[1])
+
+      return message
+    } catch (error) {
+      console.log(error)
+      throw new Error(error.message)
+    }
+  }
+
+  public createInstance (deploy: I.Deploy): Dockerode {
+    if (deploy.local === true) {
+      return new Dockerode({ socketPath: '/var/run/docker.sock' })
+    } else {
+      return new Dockerode({
+        socketPath: '',
+        host: deploy.host,
+        port: deploy.port
+      })
     }
   }
 
   public async startContainer (newContainer: Dockerode.Container): Promise<void> {
     try {
       await newContainer.start()
-      console.log('6 - iniciou o novo container')
     } catch (error) {
-      console.log(error)
       console.log('6.e - Erro ao tentar iniciar o container')
       return error
     }
@@ -106,13 +160,9 @@ export default new class Actions {
 
   public async inspectContainer (container: Dockerode.Container): Promise<Dockerode.ContainerInspectInfo | string> {
     try {
-      console.log('1 - inspeciona container')
       const inspect = await container.inspect()
       return inspect
     } catch (error) {
-      if (error.reason === 'no such container') {
-        console.log('2.e - O container não existe')
-      }
       return error.reason
     }
   }
@@ -121,29 +171,23 @@ export default new class Actions {
     return docker.getContainer(containerName)
   }
 
-  // public async inspectImage (image: Dockerode.Image): Promise<Dockerode.ImageInspectInfo> {
-  //   try {
-  //     const imageInspect = await image.inspect()
-  //     console.log('5 - inspeciona nova image')
-  //     console.log('5.1 - o id da image baixada é: ' + imageInspect.RepoTags[0])
-  //     return imageInspect
-  //   } catch (error) {
-  //     console.log('5.e - nova imagem não foi encontrada')
-  //     return error
-  //   }
-  // }
-
-  public async stopAndRemoveContainer (container: Dockerode.Container): Promise<void> {
+  public async stopAndRemoveContainer (container: Dockerode.Container): Promise<string[]> {
+    const message = []
     try {
       await container.stop()
-      console.log('2 - container parado com sucesso')
+      message[0] = '3 - container parado com sucesso'
+      console.log(message[0])
 
       await container.remove({ v: true })
-      console.log('2.1 - container removido com sucesso')
+      message[1] = '3.1 - container removido com sucesso'
+      console.log(message[1])
+      return message
     } catch (error) {
       if (error.reason === 'container already stopped') {
         await container.remove({ v: true })
-        console.log('2.e - o container já estava parado, container removido')
+        message[0] = '3.e - o container já estava parado, container removido'
+        console.log(message[0])
+        return message
       }
     }
   }
@@ -151,7 +195,6 @@ export default new class Actions {
   public async createNewContaier (docker: Dockerode, config: Dockerode.ContainerCreateOptions): Promise<Dockerode.Container> {
     try {
       const newContainer = await docker.createContainer(config)
-      console.log('5 - recriou o container')
       return newContainer
     } catch (error) {
       console.log('5.e - erro ao tentar criar container')
@@ -160,12 +203,18 @@ export default new class Actions {
     }
   }
 
-  public async removeImage (docker: Dockerode, imageName: string): Promise<void> {
+  public async removeImage (docker: Dockerode, imageName: string): Promise<string[]> {
+    const message = []
+
     try {
       await docker.getImage(imageName).remove()
-      console.log('3 - imagem removida com sucesso')
+      message[0] = '4 - imagem removida com sucesso'
+      console.log(message[0])
+      return message
     } catch (error) {
-      throw new Error(`3.e - Problemas ao remover imagem ${imageName}`)
+      message[0] = `4.e - Problemas ao remover imagem ${imageName}`
+      console.log(message[0])
+      return message
     }
   }
 
@@ -175,7 +224,6 @@ export default new class Actions {
     // let json
     // eslint-disable-next-line no-async-promise-executor
     return new Promise((resolve, reject) => {
-      console.log('4 - Iniciando download...')
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       docker.pull(imageName, (pullError: any, stream: Stream) => {
         if (pullError) {
@@ -197,7 +245,6 @@ export default new class Actions {
           if (error) {
             reject(error)
           }
-          console.log('4.1 - Download da imagem concluído')
           resolve(docker.getImage(imageName))
         })
       })
