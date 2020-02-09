@@ -9,6 +9,7 @@ export interface User {
 
 export interface Deploy {
   id?: number
+  nameProject?: string
   secret?: string
   email?: string
   local?: boolean

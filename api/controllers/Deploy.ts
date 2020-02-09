@@ -18,8 +18,17 @@ export default new class Deploy {
 
   public async destroy (req: NewRequest, res: Response): Promise<void> {
     try {
-      await query.deleteDeployById(req.userId, Number(req.params.id))
+      await query.deleteDeployById(req.userId, Number(req.params.deployId))
       resp.returnSucessMessage(res, 'Deploy removido com sucesso')
+    } catch (error) {
+      resp.returnErrorMessage(res, 'Erro ao tentar criar um novo auto deploy')
+    }
+  }
+
+  public async update (req: NewRequest, res: Response): Promise<void> {
+    try {
+      await query.updateDeployById(req.userId, Number(req.params.deployId), req.body)
+      resp.returnSucessMessage(res, 'Deploy atualizado com sucesso')
     } catch (error) {
       resp.returnErrorMessage(res, 'Erro ao tentar criar um novo auto deploy')
     }

@@ -14,13 +14,18 @@ routes.post(
 )
 
 routes.delete(
-  '/api/deploy/delete/:id',
+  '/api/deploy/delete/:deployId',
   cDeploy.destroy
 )
 
 routes.get(
   '/api/deploy/getall',
   cDeploy.indexAll
+)
+
+routes.put(
+  '/api/deploy/update/:deployId',
+  cDeploy.update
 )
 
 // Containers

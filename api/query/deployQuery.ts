@@ -57,6 +57,23 @@ export default new class DeployQuery {
   }
 
   /**
+   * Update One Deploy
+   *
+   * @param userId User ID to find deploy
+   * @param deploy User ID to find deploy
+   * @returns Return a void function
+   */
+  public async updateDeployById (userId: number, deployId: number, deployForm: I.Deploy): Promise<void> {
+    try {
+      await knex('deploys')
+        .where({ id: deployId, userIdFk: userId })
+        .update(deployForm)
+    } catch (error) {
+      throw new Error('Error whe tring to update the deploy')
+    }
+  }
+
+  /**
    * @description This method find all deploy by User ID
    * @param userId User ID - For search a deploy list
    */
