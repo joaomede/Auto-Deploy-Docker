@@ -159,7 +159,7 @@ export default {
     },
     close() {
       if (this.dialogComponent === false) {
-        this.$emit("eventClose");
+        this.eventClose();
       }
     },
     eventClose() {
