@@ -4,33 +4,97 @@
       <v-card class="md-2">
         <v-card-title class="headline">Create New Project Deploy</v-card-title>
         <div class="mx-2">
-          <TextFieldValidate
-            label="* Project Name"
+          <ValidationProvider
+            name="projectName"
             rules="required"
-            @model="form.nameProject = $event"
-          />
-          <TextFieldValidate
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="form.nameProject"
+              :error-messages="errors"
+              :success="valid"
+              outlined
+              rounded
+              dense
+              label="* Project Name"
+              required
+            ></v-text-field>
+          </ValidationProvider>
+
+          <ValidationProvider
+            name="projectName"
             rules="required"
-            label="* Secret"
-            @model="form.secret = $event"
-          />
-          <Checkbox label="** Local Docker?" @model="form.local = $event" />
-          <TextFieldRequired
-            v-if="!form.local"
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="form.secret"
+              :error-messages="errors"
+              :success="valid"
+              outlined
+              rounded
+              dense
+              label="* Secret"
+              required
+            ></v-text-field>
+          </ValidationProvider>
+
+          <v-checkbox
+            v-model="form.local"
+            label="** Local Docker?"
+            color="blue"
+          ></v-checkbox>
+
+          <ValidationProvider
+            name="host"
             :rules="{ required }"
-            label="** Set host for remote docker API, ex.: http://1.1.1.1"
-            @model="form.host = $event"
-          />
-          <NumberFieldRequired
-            v-if="!form.local"
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="form.host"
+              :error-messages="errors"
+              :success="valid"
+              outlined
+              rounded
+              dense
+              label="** Set host for remote docker API, ex.: http://1.1.1.1"
+              required
+            ></v-text-field>
+          </ValidationProvider>
+
+          <ValidationProvider
+            name="port"
             :rules="{ required }"
-            label="** Set a port for remote docker API. ex.: 5000"
-            @model="form.port = $event"
-          />
-          <EmailField
-            label="* Set a Email 'Notification'"
-            @model="form.email = $event"
-          />
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="form.port"
+              :error-messages="errors"
+              :success="valid"
+              type="number"
+              outlined
+              rounded
+              dense
+              label="** Set a port for remote docker API. ex.: 5000"
+              required
+            ></v-text-field>
+          </ValidationProvider>
+
+          <ValidationProvider
+            name="Email"
+            rules="required|email"
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="form.email"
+              :error-messages="errors"
+              :success="valid"
+              outlined
+              rounded
+              dense
+              label="* Set a Email 'Notification'"
+              required
+            ></v-text-field>
+          </ValidationProvider>
         </div>
         <h4>* Fields Required</h4>
         <h4>** If "local" is disabled, subsequent fields are required</h4>
@@ -51,23 +115,11 @@
 </template>
 
 <script>
-import TextFieldValidate from "../inputs/TextFieldValidate";
-
-import TextFieldRequired from "../inputs/TextFieldRequired";
-import NumberFieldRequired from "../inputs/NumberFieldRequired";
-
-import Checkbox from "../inputs/CheckBox";
-import EmailField from "../inputs/EmailField";
 import GreenButtonValid from "../button/GreenButtonValid";
 import BlackButton from "../button/BlackButton";
 
 export default {
   components: {
-    TextFieldValidate,
-    TextFieldRequired,
-    NumberFieldRequired,
-    Checkbox,
-    EmailField,
     GreenButtonValid,
     BlackButton
   },
@@ -110,12 +162,13 @@ export default {
     },
     close() {
       if (this.dialogComponent === false) {
-        this.$emit("eventClose");
+        this.eventClose();
       }
     },
     eventClose() {
       this.dialogComponent = false;
       this.$emit("eventClose");
+      this.reset();
     },
     async createNewDeployProject() {
       try {
@@ -128,6 +181,16 @@ export default {
       } catch (error) {
         this.notify(error.response.data.error, "red");
       }
+    },
+    reset() {
+      this.form = {
+        nameProject: "",
+        secret: "",
+        local: false,
+        host: "",
+        port: 8080,
+        email: ""
+      };
     }
   }
 };
