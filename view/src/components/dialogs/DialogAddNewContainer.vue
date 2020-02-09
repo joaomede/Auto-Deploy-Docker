@@ -4,39 +4,98 @@
       <v-card class="pa-2">
         <h2 class="text-center">Define a new container template</h2>
 
-        <NumberField
-          :form="form"
+        <ValidationProvider
+          name="Order"
           rules="required"
-          label="Order to start"
-          @model="form.order = $event"
-        />
-        <TextFieldValidate
+          v-slot="{ errors, valid }"
+        >
+          <v-text-field
+            v-model="form.order"
+            :error-messages="errors"
+            :success="valid"
+            type="number"
+            outlined
+            rounded
+            dense
+            label="Order to start"
+            required
+          ></v-text-field>
+        </ValidationProvider>
+
+        <ValidationProvider
+          name="Name"
           rules="required"
-          label="Container Name"
-          @model="form.config.name = $event"
-        />
-        <TextFieldValidate
+          v-slot="{ errors, valid }"
+        >
+          <v-text-field
+            v-model="form.config.name"
+            :error-messages="errors"
+            :success="valid"
+            outlined
+            rounded
+            dense
+            label="Container Name"
+            required
+          ></v-text-field>
+        </ValidationProvider>
+
+        <ValidationProvider
+          name="Image Name"
           rules="required"
-          label="Image Name"
-          @model="form.config.Image = $event"
-        />
-        <TextField label="Work Dir." @model="form.config.WorkingDir = $event" />
+          v-slot="{ errors, valid }"
+        >
+          <v-text-field
+            v-model="form.config.Image"
+            :error-messages="errors"
+            :success="valid"
+            outlined
+            rounded
+            dense
+            label="Image Name"
+            required
+          ></v-text-field>
+        </ValidationProvider>
+
+        <v-text-field
+          v-model="form.config.WorkingDir"
+          outlined
+          rounded
+          dense
+          label="Work Dir."
+        ></v-text-field>
+
         <v-divider></v-divider>
 
-        <CheckBox
+        <v-checkbox
+          v-model="form.config.AttachStdin"
           label="AttachStdin"
-          @model="form.config.AttachStdin = $event"
-        />
-        <CheckBox
+          color="blue"
+        ></v-checkbox>
+
+        <v-checkbox
+          v-model="form.config.AttachStdout"
           label="AttachStdout"
-          @model="form.config.AttachStdout = $event"
-        />
-        <CheckBox
+          color="blue"
+        ></v-checkbox>
+
+        <v-checkbox
+          v-model="form.config.AttachStderr"
           label="AttachStderr"
-          @model="form.config.AttachStderr = $event"
-        />
-        <CheckBox label="Tty" @model="form.config.Tty = $event" />
-        <CheckBox label="StdinOnce" @model="form.config.StdinOnce = $event" />
+          color="blue"
+        ></v-checkbox>
+
+        <v-checkbox
+          v-model="form.config.Tty"
+          label="Tty"
+          color="blue"
+        ></v-checkbox>
+
+        <v-checkbox
+          v-model="form.config.StdinOnce"
+          label="StdinOnce"
+          color="blue"
+        ></v-checkbox>
+
         <v-divider></v-divider>
 
         <div>
@@ -46,16 +105,22 @@
           <div v-for="volume in volumes" :key="volume.index" class="ma-2">
             <v-row>
               <v-col cols="12" md="6">
-                <TextField
+                <v-text-field
+                  v-model="volume.host"
+                  outlined
+                  rounded
+                  dense
                   label="Host, ex.: /home/documents/project"
-                  @model="volume.host = $event"
-                />
+                ></v-text-field>
               </v-col>
               <v-col cols="12" md="6">
-                <TextField
+                <v-text-field
+                  v-model="volume.container"
+                  outlined
+                  rounded
+                  dense
                   label="Container, ex.: /home/document/src"
-                  @model="volume.container = $event"
-                />
+                ></v-text-field>
               </v-col>
             </v-row>
           </div>
@@ -69,10 +134,22 @@
           <div v-for="env in envs" :key="env.index" class="ma-2">
             <v-row>
               <v-col cols="12" md="6">
-                <TextField label="Key" @model="env.key = $event" />
+                <v-text-field
+                  v-model="env.key"
+                  outlined
+                  rounded
+                  dense
+                  label="Key"
+                ></v-text-field>
               </v-col>
               <v-col cols="12" md="6">
-                <TextField label="Value" @model="env.value = $event" />
+                <v-text-field
+                  v-model="env.value"
+                  outlined
+                  rounded
+                  dense
+                  label="Value"
+                ></v-text-field>
               </v-col>
             </v-row>
           </div>
@@ -84,7 +161,13 @@
           <PlusButton @eventClick="addMoreCommand()" />
           <MinorButton @eventClick="removeCommand()" />
           <div v-for="command in commands" :key="command.index" class="ma-2">
-            <TextField label="New Command" @model="command.command = $event" />
+            <v-text-field
+              v-model="command.command"
+              outlined
+              rounded
+              dense
+              label="New Command"
+            ></v-text-field>
           </div>
         </div>
         <v-divider></v-divider>
@@ -106,11 +189,6 @@
 </template>
 
 <script>
-import TextField from "../inputs/TextField";
-import TextFieldValidate from "../inputs/TextFieldValidate";
-
-import NumberField from "../inputs/NumberField";
-import CheckBox from "../inputs/CheckBox";
 import MinorButton from "../button/MinorButton";
 import PlusButton from "../button/PlusButton";
 import BlackButton from "../button/BlackButton";
@@ -118,10 +196,6 @@ import GreenButtonValid from "../button/GreenButtonValid";
 
 export default {
   components: {
-    TextField,
-    TextFieldValidate,
-    NumberField,
-    CheckBox,
     MinorButton,
     PlusButton,
     GreenButtonValid,

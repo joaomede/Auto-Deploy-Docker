@@ -1,54 +1,101 @@
 <template>
-  <div class="centralDiv">
-    <v-card class="ma-2">
-      <h2 class="text-center">
-        Register
-      </h2>
-      <v-col cols="12" sm="12">
-        <v-text-field v-model="loginForm.name" label="Your name" />
-      </v-col>
+  <ValidationObserver ref="obs" v-slot="{ invalid, validated, passes }">
+    <div class="centralDiv">
+      <v-card class="ma-2">
+        <h2 class="text-center">
+          Register
+        </h2>
+        <v-col cols="12" sm="12">
+          <ValidationProvider
+            name="Email"
+            rules="required"
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="loginForm.name"
+              label="Your name"
+              :error-messages="errors"
+              :success="valid"
+              outlined
+              rounded
+              dense
+              required
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
 
-      <v-col cols="12" sm="12">
-        <v-text-field
-          v-model="loginForm.email"
-          :rules="[rules.required, rules.email]"
-          label="E-mail"
-        />
-      </v-col>
+        <v-col cols="12" sm="12">
+          <ValidationProvider
+            name="Email"
+            rules="required|email"
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="loginForm.email"
+              :error-messages="errors"
+              :success="valid"
+              outlined
+              rounded
+              dense
+              label="Email"
+              required
+            ></v-text-field>
+          </ValidationProvider>
+        </v-col>
 
-      <v-col cols="12" sm="12">
-        <v-text-field
-          v-model="loginForm.password"
-          :rules="[rules.required, rules.min]"
-          label="Your Password"
-          type="Password"
-        />
-        <div class="text-center my-2">
-          <v-btn color="green" dark class="ma-2" @click="register()">
-            Register
-          </v-btn>
-        </div>
-      </v-col>
-    </v-card>
-  </div>
+        <v-col cols="12" sm="12">
+          <ValidationProvider
+            name="password"
+            rules="required"
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="loginForm.password"
+              :error-messages="errors"
+              :success="valid"
+              label="Your Password"
+              type="password"
+              outlined
+              rounded
+              dense
+              required
+            ></v-text-field>
+          </ValidationProvider>
+          <div class="text-center my-2">
+            <BlackButton
+              class="mx-2"
+              name="Back To Login"
+              @eventClick="toLogin()"
+            />
+            <GreenButtonValid
+              :invalid="invalid"
+              :validated="validated"
+              :passes="passes"
+              name="Register"
+              @eventClick="register()"
+            />
+          </div>
+        </v-col>
+      </v-card>
+    </div>
+  </ValidationObserver>
 </template>
 
 <script>
+import BlackButton from "../components/button/BlackButton";
+import GreenButtonValid from "../components/button/GreenButtonValid";
+
 export default {
+  components: {
+    BlackButton,
+    GreenButtonValid
+  },
   data() {
     return {
       loginForm: {
         name: "",
         email: "",
         password: ""
-      },
-      rules: {
-        min: v => v.length >= 8 || "Min 8 characters",
-        required: value => !!value || "Required.",
-        email: value => {
-          const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-          return pattern.test(value) || "Invalid e-mail.";
-        }
       }
     };
   },
@@ -67,6 +114,9 @@ export default {
       } catch (error) {
         this.notify(error.response.data.error, "red");
       }
+    },
+    toLogin() {
+      this.$router.replace("/login");
     },
     checkLogin() {
       if (this.user.id !== null) {

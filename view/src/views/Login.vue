@@ -6,10 +6,41 @@
           Login
         </h2>
         <v-col cols="12" sm="12">
-          <EmailField label="Email" @model="loginForm.email = $event" />
+          <ValidationProvider
+            name="Email"
+            rules="required|email"
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="loginForm.email"
+              :error-messages="errors"
+              :success="valid"
+              outlined
+              rounded
+              dense
+              label="Email"
+              required
+            ></v-text-field>
+          </ValidationProvider>
         </v-col>
         <v-col cols="12" sm="12">
-          <PasswordField @model="loginForm.password = $event" />
+          <ValidationProvider
+            name="password"
+            rules="required"
+            v-slot="{ errors, valid }"
+          >
+            <v-text-field
+              v-model="loginForm.password"
+              :error-messages="errors"
+              :success="valid"
+              label="Password"
+              type="password"
+              outlined
+              rounded
+              dense
+              required
+            ></v-text-field>
+          </ValidationProvider>
         </v-col>
         <div class="text-center">
           <v-col cols="12">
@@ -34,14 +65,12 @@
 
 <script>
 import BlackButton from "../components/button/BlackButton";
-import EmailField from "../components/inputs/EmailField";
-import PasswordField from "../components/inputs/PasswordField";
+import GreenButtonValid from "../components/button/GreenButtonValid";
 
 export default {
   components: {
     BlackButton,
-    EmailField,
-    PasswordField
+    GreenButtonValid
   },
   data() {
     return {
