@@ -209,7 +209,7 @@ export default {
       if (this.volumes.length > 0) {
         this.volume = [];
         this.volumes.forEach(volume => {
-          this.volume.push(volume.container + ":" + volume.host);
+          this.volume.push(volume.host + ":" + volume.container);
         });
       }
 
