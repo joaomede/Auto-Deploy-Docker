@@ -1,5 +1,5 @@
 <template>
-  <v-btn color="green" dark @click="eventClick()">
+  <v-btn color="success" @click="eventClick()">
     {{ name }}
   </v-btn>
 </template>

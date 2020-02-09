@@ -1,6 +1,6 @@
 <template>
   <v-btn
-    color="primary"
+    color="success"
     @click="passes(eventClick)"
     :disabled="invalid || !validated"
     >{{ name }}</v-btn
