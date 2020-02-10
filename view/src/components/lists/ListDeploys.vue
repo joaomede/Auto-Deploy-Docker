@@ -71,7 +71,6 @@ export default {
   },
   methods: {
     async deleteDeploy() {
-      console.log("aqi");
       try {
         const result = await this.$axios.delete(
           `/api/deploy/delete/${this.deploy.id}`,
