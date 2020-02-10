@@ -45,10 +45,12 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   let autorizacao = to.matched.some(record => record.meta.requerAuth);
   let user = window.$cookies.get("user");
+  let url = localStorage.getItem("ApiUrl");
+
   if (autorizacao) {
     if (user) {
       http
-        .get("/api/auth/checkin", { headers: user.headers })
+        .get(url + "/api/auth/checkin", { headers: user.headers })
         .then(() => {
           next();
         })

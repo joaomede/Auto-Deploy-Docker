@@ -32,6 +32,7 @@ export default {
     };
   },
   created() {
+    this.$store.dispatch("setUrlApi");
     this.$store.dispatch("setUser");
   },
   methods: {

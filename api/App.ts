@@ -1,11 +1,11 @@
-// import * as path from 'path'
+import * as path from 'path'
 import * as http from 'http'
 import * as https from 'https'
 import router from './routes/Router'
 import routerAuth from './routes/RouterAuth'
 import routerCheckin from './routes/RouterCheckin'
 import { env } from './config/env'
-// import history = require('connect-history-api-fallback')
+import history = require('connect-history-api-fallback')
 import express = require('express')
 import cors = require('cors')
 
@@ -21,6 +21,8 @@ class App {
   }
 
   private routes (): void {
+    this.express.use(history())
+    this.express.use(express.static(path.join(__dirname, '../view/dist')))
     this.express.use(routerAuth)
     this.express.use(routerCheckin)
     this.express.use(router)

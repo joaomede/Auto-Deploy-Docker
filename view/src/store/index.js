@@ -2,11 +2,13 @@ import Vue from "vue";
 import Vuex from "vuex";
 import router from "../router";
 import { http } from "../plugins/axios";
+import axios from "axios";
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     user: {},
+    urlApi: null,
     indexContainer: 0,
     indexDeploy: 0,
     containerList: [],
@@ -49,6 +51,18 @@ export default new Vuex.Store({
       this.commit("setUser");
       router.replace("/home");
     },
+    setUrlApi(state) {
+      if (process.env.NODE_ENV === "development") {
+        state.urlApi = process.env.VUE_APP_APIURL;
+        localStorage.setItem("ApiUrl", state.urlApi);
+      } else {
+        state.urlApi = window.location.origin;
+        localStorage.setItem("ApiUrl", state.urlApi);
+      }
+      Vue.prototype.$axios = axios.create({
+        baseURL: state.urlApi
+      });
+    },
     setIndexContainer(state, index) {
       state.indexContainer = index;
     },
@@ -84,7 +98,7 @@ export default new Vuex.Store({
         });
         state.containerList = result.data;
       } catch (error) {
-        console.log("erro ao tentar carregar");
+        // console.log("erro ao tentar carregar");
       }
     },
     removeContainer(state) {
@@ -100,6 +114,9 @@ export default new Vuex.Store({
     },
     setLogin({ commit }, user) {
       commit("setLogin", user);
+    },
+    setUrlApi({ commit }) {
+      commit("setUrlApi");
     },
     setIndexContainer({ commit }, index) {
       commit("setIndexContainer", index);
