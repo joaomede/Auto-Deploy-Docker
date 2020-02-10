@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import router from "../router";
-import { http } from "../plugins/axios";
 import axios from "axios";
 Vue.use(Vuex);
 
@@ -71,7 +70,7 @@ export default new Vuex.Store({
     },
     async setDeployList(state) {
       try {
-        const result = await http.get("/api/deploy/getall", {
+        const result = await axios.get(state.urlApi + "/api/deploy/getall", {
           headers: state.user.headers
         });
         state.deployList = result.data;
@@ -93,9 +92,12 @@ export default new Vuex.Store({
     },
     async setContainerList(state, id) {
       try {
-        const result = await http.get(`/api/container/getall/${id}`, {
-          headers: state.user.headers
-        });
+        const result = await axios.get(
+          state.urlApi + `/api/container/getall/${id}`,
+          {
+            headers: state.user.headers
+          }
+        );
         state.containerList = result.data;
       } catch (error) {
         // console.log("erro ao tentar carregar");
