@@ -32,6 +32,29 @@ export default new class ContainerQuery {
     }
   }
 
+  /**
+   * Update container
+   *
+   * @param userId User ID to find container by user
+   * @param containerId Container ID to find container container by ip
+   * @param container New container form to update
+   * @returns Return a new container
+   */
+  public async updateContainerById (userId: number, containerId: number, container: I.Container): Promise<I.Container> {
+    try {
+      await knex('containers')
+        .where({ id: containerId, userIdFk: userId })
+        .update(container)
+
+      const result: I.Container[] = await knex('containers')
+        .where({ id: containerId, userIdFk: userId })
+        .select()
+
+      return result[0]
+    } catch (error) {
+      throw new Error('Error whe tring to update the container')
+    }
+  }
   public async findAllContainerByUserId (userId: number, deployId: number): Promise<I.Container[]> {
     try {
       const listContainer: I.Container[] = await knex('containers')

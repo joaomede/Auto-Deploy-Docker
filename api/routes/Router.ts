@@ -44,6 +44,11 @@ routes.get(
   cContainer.indexAll
 )
 
+routes.put(
+  '/api/container/update/:containerId',
+  cContainer.update
+)
+
 // WebHook
 routes.post(
   '/api/deploy/webhook/:secret',

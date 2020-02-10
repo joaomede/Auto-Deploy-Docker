@@ -219,8 +219,7 @@ export default new class Actions {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async pullImage (docker: Dockerode, imageName: string): Promise<any> {
+  public async pullImage (docker: Dockerode, imageName: string): Promise<Dockerode.Image> {
     // let message = ''
     // let json
     // eslint-disable-next-line no-async-promise-executor

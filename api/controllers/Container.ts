@@ -27,6 +27,18 @@ export default new class Container {
     }
   }
 
+  public async update (req: NewRequest, res: Response): Promise<void> {
+    try {
+      const container = await containerQuery.updateContainerById(req.userId, Number(req.params.containerId), req.body)
+      resp.returnSucessObject(res, {
+        ok: 'Container updated',
+        container: container
+      })
+    } catch (error) {
+      resp.returnErrorMessage(res, error.message)
+    }
+  }
+
   public async indexAll (req: NewRequest, res: Response): Promise<void> {
     try {
       const listContainer = await containerQuery.findAllContainerByUserId(
