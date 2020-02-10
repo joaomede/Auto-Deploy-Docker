@@ -1,0 +1,43 @@
+version: "3.3"
+
+services:
+  pg:
+    image: postgres:11.5-alpine
+    container_name: pg-database-auto-deploy
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: banco
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - apidoc-network
+
+  server:
+    image: joaomede/auto-deploy-docker:v1.0.0
+    container_name: "server-auto-deploy"
+    depends_on:
+      - pg
+    links:
+      - pg
+    environment:
+      HOSTDB: pg
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: banco
+      NODE_ENV: dev
+      EMAIL: teste@gmail.com
+      PASSWORDSMTP: 123
+      SECRET: teste
+    ports:
+      - 8080:80
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - apidoc-network
+
+networks:
+  apidoc-network:
+    driver: bridge
