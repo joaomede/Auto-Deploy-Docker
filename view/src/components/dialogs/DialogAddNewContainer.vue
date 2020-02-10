@@ -221,8 +221,11 @@ export default {
           AttachStdout: false,
           AttachStderr: false,
           Tty: false,
+          Cmd: [],
+          Env: [],
           StdinOnce: false,
-          WorkingDir: ""
+          WorkingDir: "",
+          HostConfig: {}
         }
       },
 
@@ -254,7 +257,10 @@ export default {
     },
     addMoreVolumes() {
       this.volumes.push({
-        volume: ""
+        volume: {
+          host: "",
+          container: ""
+        }
       });
     },
     removeVolumes() {
@@ -332,12 +338,14 @@ export default {
           AttachStdout: false,
           AttachStderr: false,
           Tty: false,
+          Cmd: [],
+          Env: [],
           StdinOnce: false,
-          WorkingDir: ""
+          WorkingDir: "",
+          HostConfig: {}
         }
       };
       this.model = {};
-      console.log(this.form);
     }
   }
 };

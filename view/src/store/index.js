@@ -65,8 +65,8 @@ export default new Vuex.Store({
         this.notify(error.response.data.error, "red");
       }
     },
-    removeDeploy(state, index) {
-      Vue.delete(state.deployList, index);
+    removeDeploy(state) {
+      Vue.delete(state.deployList, state.indexDeploy);
     },
     setNewDeploy(state, newDeploy) {
       if (state.deployList === undefined) {
@@ -87,8 +87,11 @@ export default new Vuex.Store({
         console.log("erro ao tentar carregar");
       }
     },
-    removeContainer(state, index) {
-      Vue.delete(state.containerList, index);
+    removeContainer(state) {
+      Vue.delete(state.containerList, state.indexContainer);
+    },
+    updateContainer(state, updatedContainer) {
+      Vue.set(state.containerList, state.indexContainer, updatedContainer);
     }
   },
   actions: {
@@ -107,8 +110,8 @@ export default new Vuex.Store({
     setDeployList({ commit }) {
       commit("setDeployList");
     },
-    removeDeploy({ commit }, index) {
-      commit("removeDeploy", index);
+    removeDeploy({ commit }) {
+      commit("removeDeploy");
     },
     setNewDeploy({ commit }, newDeploy) {
       commit("setNewDeploy", newDeploy);
@@ -116,8 +119,11 @@ export default new Vuex.Store({
     setContainerList({ commit }, id) {
       commit("setContainerList", id);
     },
-    removeContainer({ commit }, index) {
-      commit("removeContainer", index);
+    removeContainer({ commit }) {
+      commit("removeContainer");
+    },
+    updateContainer({ commit }, newContainer) {
+      commit("updateContainer", newContainer);
     }
   },
   modules: {}

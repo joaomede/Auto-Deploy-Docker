@@ -4,12 +4,12 @@
       :dialog="dialogDelete"
       :item="deploy"
       title="Do you really delete this item?"
+      @removeItem="deleteDeploy()"
       @eventClose="dialogDelete = false"
     />
     <DialogEditDeploy
       :deploy="deploy"
       :dialog="dialogEditDeploy"
-      @saveEdit="saveEdit()"
       @eventClose="dialogEditDeploy = false"
     />
 
@@ -71,13 +71,14 @@ export default {
   },
   methods: {
     async deleteDeploy() {
+      console.log("aqi");
       try {
         const result = await this.$axios.delete(
           `/api/deploy/delete/${this.deploy.id}`,
           { headers: this.user.headers }
         );
         this.notify(result.data.ok, "green");
-        this.$store.dispatch("removeDeploy", this.index);
+        this.$store.dispatch("removeDeploy");
       } catch (error) {
         this.notify(error.message, "red");
       }
@@ -87,7 +88,7 @@ export default {
     },
     showDeleteDeploy(deploy, index) {
       this.dialogDelete = true;
-      this.index = index;
+      this.$store.dispatch("setIndexDeploy", index);
       this.deploy = deploy;
     },
     showDeployOptions(deploy) {
@@ -96,7 +97,7 @@ export default {
     },
     showEditDeploy(deploy, index) {
       this.dialogEditDeploy = true;
-      this.index = index;
+      this.$store.dispatch("setIndexDeploy", index);
       this.deploy = Object.assign({}, this.deploy, deploy);
     }
   }

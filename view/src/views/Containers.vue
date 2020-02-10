@@ -41,11 +41,6 @@ export default {
   },
   created() {
     this.$store.dispatch("setContainerList", this.id);
-  },
-  methods: {
-    showSettings(id) {
-      console.log(id);
-    }
   }
 };
 </script>

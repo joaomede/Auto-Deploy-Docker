@@ -45,6 +45,7 @@
           ></v-checkbox>
 
           <ValidationProvider
+            v-if="!form.local"
             name="host"
             :rules="{ required }"
             v-slot="{ errors, valid }"
@@ -62,6 +63,7 @@
           </ValidationProvider>
 
           <ValidationProvider
+            v-if="!form.local"
             name="port"
             :rules="{ required }"
             v-slot="{ errors, valid }"
