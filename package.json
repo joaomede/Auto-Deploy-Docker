@@ -25,7 +25,7 @@
     "start:dev": "sucrase-node api/server.ts",
     "migrate": "sucrase-node api/db/migrate",
     "migrate:down": "sucrase-node api/db/migratedown",
-    "build:view": "cd view && yarn quasar build -m pwa",
+    "build:view": "cd view && yarn build",
     "start": "node dist/server.js",
     "version": "git add -A ./",
     "postversion": "git push && git push --tags"
