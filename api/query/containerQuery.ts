@@ -23,6 +23,12 @@ export default new class ContainerQuery {
     }
   }
 
+  /**
+   * find container by deploy ID foreign relationship
+   *
+   * @param deployId Deploy ID
+   * @returns Returns a container list
+   */
   public async findContainers (deployId: number): Promise<I.Container[]> {
     try {
       const containers: I.Container[] = await knex('containers').where({ deployIdFk: deployId }).orderBy('order', 'asc').select()
@@ -55,6 +61,14 @@ export default new class ContainerQuery {
       throw new Error('Error whe tring to update the container')
     }
   }
+
+  /**
+   * Find all container by user id and deploy relationship
+   *
+   * @param userId User ID to find all containers
+   * @param deployId Deploy ID to foreign relationship
+   * @returns Returns a container list filter by user and deploy relationship
+   */
   public async findAllContainerByUserId (userId: number, deployId: number): Promise<I.Container[]> {
     try {
       const listContainer: I.Container[] = await knex('containers')
@@ -67,6 +81,12 @@ export default new class ContainerQuery {
     }
   }
 
+  /**
+   * Delete a container by id
+   *
+   * @param userId User ID to find foreign relationship
+   * @param containerId Container ID to find
+   */
   public async deleteContainerById (userId: number, containerId: number): Promise<void> {
     try {
       await knex('containers').where({
