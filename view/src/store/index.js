@@ -7,11 +7,15 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: {},
+    indexContainer: 0,
+    indexDeploy: 0,
     containerList: [],
     deployList: []
   },
   getters: {
     getUser: state => state.user,
+    getIndexContainer: state => state.indexContainer,
+    getIndexDeploy: state => state.indexDeploy,
     getDeployList: state => state.deployList,
     getContainerList: state => state.containerList
   },
@@ -44,6 +48,12 @@ export default new Vuex.Store({
       window.$cookies.set("user", auth);
       this.commit("setUser");
       router.replace("/home");
+    },
+    setIndexContainer(state, index) {
+      state.indexContainer = index;
+    },
+    setIndexDeploy(state, index) {
+      state.indexDeploy = index;
     },
     async setDeployList(state) {
       try {
@@ -87,6 +97,12 @@ export default new Vuex.Store({
     },
     setLogin({ commit }, user) {
       commit("setLogin", user);
+    },
+    setIndexContainer({ commit }, index) {
+      commit("setIndexContainer", index);
+    },
+    setIndexDeploy({ commit }, index) {
+      commit("setIndexDeploy", index);
     },
     setDeployList({ commit }) {
       commit("setDeployList");
