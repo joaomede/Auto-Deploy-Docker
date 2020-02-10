@@ -24,14 +24,13 @@ services:
     environment:
       NODE_ENV: "dev"
       HOSTDB: db
-      PORTHOST: 5100
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: senha
       POSTGRES_DB: senha
     env_file:
       - .env
     ports:
-      - 5100:5100
+      - 5100:80
     command: ./scripts/dev.sh
     expose:
       - 5100
