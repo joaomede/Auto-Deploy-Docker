@@ -1,6 +1,6 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import { http } from "../plugins/axios";
+import axios from "axios";
 Vue.use(VueRouter);
 
 const routes = [
@@ -49,7 +49,7 @@ router.beforeEach((to, from, next) => {
 
   if (autorizacao) {
     if (user) {
-      http
+      axios
         .get(url + "/api/auth/checkin", { headers: user.headers })
         .then(() => {
           next();
