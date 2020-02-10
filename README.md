@@ -1,7 +1,7 @@
 ![GitHub](https://img.shields.io/github/license/joaomede/Auto-Deploy-Docker) ![GitHub package.json version](https://img.shields.io/github/package-json/v/joaomede/Auto-Deploy-Docker) ![GitHub repo size](https://img.shields.io/github/repo-size/joaomede/Auto-Deploy-Docker)
 
-# Auto Deploy
-A system for implanting aumatic systems.
+# Auto Deploy Docker
+For automatic deployment.
 
 ## STATUS - IN DEV / NOT RELEASE
 
