@@ -2,10 +2,10 @@ import { knex } from '../db/connection'
 import * as I from '../interface/Interfaces'
 
 export default new class DeployQuery {
-  public async findDeploy (secret: string, userId: number): Promise<I.Deploy> {
+  public async findDeploy (secret: string): Promise<I.Deploy> {
     try {
       const deploy: I.Deploy[] = await knex('deploys')
-        .where({ secret: secret, userIdFk: userId })
+        .where({ secret: secret })
         .select()
 
       return deploy[0]

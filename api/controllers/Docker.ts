@@ -10,7 +10,7 @@ export default new class DeployContainer {
     const { secret } = req.params
 
     try {
-      const deploy = await deployQuery.findDeploy(secret, req.userId)
+      const deploy = await deployQuery.findDeploy(secret)
       const containers = await containerQuery.findContainers(deploy.id)
       await actions.startDeployRoutine(actions, containers, deploy)
       resp.returnSucessMessage(res, 'Implantação concluída com sucesso')
