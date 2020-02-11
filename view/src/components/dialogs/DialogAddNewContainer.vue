@@ -245,6 +245,9 @@ export default {
   methods: {
     update() {
       this.newDialog = this.dialog;
+      requestAnimationFrame(() => {
+        this.$refs.obs.validate();
+      });
     },
     close() {
       if (this.newDialog === false) {
