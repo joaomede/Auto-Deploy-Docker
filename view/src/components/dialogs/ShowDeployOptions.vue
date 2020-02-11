@@ -1,11 +1,12 @@
 <template>
-  <v-dialog v-model="dialogComponent" max-width="500">
+  <v-dialog v-model="dialogComponent">
     <v-card class="md-2">
       <v-card-title class="headline">Deploy Options</v-card-title>
       <div class="mx-2">
         <h4>Name: {{ deploy.nameProject }}</h4>
         <h4>Secret: {{ deploy.secret }}</h4>
         <h4>Local: {{ deploy.local }}</h4>
+        <h4>Webhook Endpoint: {{ cWebhookURL }}</h4>
       </div>
       <v-card-actions>
         <v-spacer></v-spacer>
@@ -41,6 +42,11 @@ export default {
       dialogComponent: false,
       required: false
     };
+  },
+  computed: {
+    cWebhookURL() {
+      return `${window.location.origin}/api/deploy/webhook/${this.deploy.secret}`;
+    }
   },
   watch: {
     dialog: "update",
