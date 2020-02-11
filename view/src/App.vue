@@ -18,7 +18,7 @@
       <router-view />
     </v-content>
     testandoasdas
-    <Footer style="z-index: 500" />
+    <Footer />
   </v-app>
 </template>
 
