@@ -3,8 +3,6 @@
 # Auto Deploy Docker
 For automatic deployment.
 
-## STATUS - IN DEV
-
 ## ABOUT
 Auto Deploy Docker, as its name suggests, is a container deployment automation, if you have a container and intend to deploy it automatically, this is a tool that promises to solve, for that, it will use Webhook to fire the triggers and perform backend routines to stop the container, remove, clean old images and recreates everything again, lets play!
 
