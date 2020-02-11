@@ -3,10 +3,10 @@
 # Auto Deploy Docker
 For automatic deployment.
 
-## STATUS - IN DEV / NOT RELEASE
+## STATUS - IN DEV
 
 ## ABOUT
-Auto Deploy Docker, as its name suggests, is a container deployment automation, if you have a container and intend to deploy it automatically, this is a tool that promises to solve, for that, it will use Webhook to fire the triggers and perform backend routines to stop the container, remove, clean old images and create everything again, lets play!
+Auto Deploy Docker, as its name suggests, is a container deployment automation, if you have a container and intend to deploy it automatically, this is a tool that promises to solve, for that, it will use Webhook to fire the triggers and perform backend routines to stop the container, remove, clean old images and recreates everything again, lets play!
 
 ## In what use case would this be useful to me?
 * Question 1 - I have a fully insulated container in the docker, it depends on 2 other containers, all need bind volumes, to store persistent data safely, in addition to needing environment variables and commands, does this system suit me?
@@ -25,16 +25,18 @@ Auto Deploy Docker, as its name suggests, is a container deployment automation, 
 * Question 2 - My container is just an environment, it is incomplete, it requires a lot of manual settings, like installing local application and various types of volume binds, I can configure it with this automatic deployment system.  
 > R - No, as stated earlier, the deployment will only take place well with fully insulated containers and prepared to run quickly
 
+
 ## Ok, I want to use, what kind of parameter can I define?
 it is possible to define:
-- the image name
-- container name 
-- commands
-- volume bind
-- Work dirand
+- Image Name
+- Container Name 
+- Commands
+- Volume bind
+- Work Dir.
 - Environments variables
 - Tty
-- and more settings
+- and more settings...
+
 
 ## I understand that he performs a routine, what are the steps of these routines?
 - 1 Stop the container
@@ -51,10 +53,10 @@ it is possible to define:
 ## What is this made of?
 In the backend there is an Api Rest, which is responsible for a simple (CRUD) that allows the creation of deploy projects and container templates, including also the user entity for system security, in addition to the API Rest, there is the core of the application, which would be the routines of deployment, they are responsible for implementing the system, the entire backend was written in typescript and most of it is asynchronous, on the client side, "Frontend", there is Vuejs with some dependencies.
 
+
 ## API Rest
 List of All Endpoints
 ```sh
-
 # Endpoints User
 POST: /api/auth/login
 POST: /api/auth/register
