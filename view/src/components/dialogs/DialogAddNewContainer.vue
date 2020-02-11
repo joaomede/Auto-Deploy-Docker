@@ -64,6 +64,14 @@
           label="Work Dir."
         ></v-text-field>
 
+        <v-text-field
+          v-model="form.config.HostConfig.NetworkMode"
+          outlined
+          rounded
+          dense
+          label="Network Mode, ex.: network-app-xyz"
+        ></v-text-field>
+
         <v-divider></v-divider>
 
         <v-checkbox
@@ -120,6 +128,35 @@
                   rounded
                   dense
                   label="Container, ex.: /home/document/src"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </div>
+        </div>
+        <v-divider></v-divider>
+
+        <div>
+          <h2>Bind Ports</h2>
+          <PlusButton @eventClick="addMorePortBind()" />
+          <MinorButton @eventClick="removePortBind()" />
+          <div v-for="port in bindPorts" :key="port.index" class="ma-2">
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="port.external"
+                  outlined
+                  rounded
+                  dense
+                  label="External Port, ex.: '8000/tcp'"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="port.internal"
+                  outlined
+                  rounded
+                  dense
+                  label="Internal Port, ex.: 80"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -193,6 +230,7 @@ import MinorButton from "../button/MinorButton";
 import PlusButton from "../button/PlusButton";
 import BlackButton from "../button/BlackButton";
 import GreenButtonValid from "../button/GreenButtonValid";
+import ExtendAddNewContainer from "../../mixins/extendAddNewContainer";
 
 export default {
   components: {
@@ -209,6 +247,7 @@ export default {
       type: String
     }
   },
+  mixins: [ExtendAddNewContainer],
   data() {
     return {
       newDialog: false,
@@ -230,12 +269,18 @@ export default {
       },
 
       volumes: [],
-      envs: [],
-      commands: [],
-      model: {},
       volume: [],
+
+      envs: [],
       env: [],
-      command: []
+
+      commands: [],
+      command: [],
+
+      bindPorts: [],
+      bindPort: [],
+
+      model: {}
     };
   },
   watch: {
@@ -245,6 +290,9 @@ export default {
   methods: {
     update() {
       this.newDialog = this.dialog;
+      this.volumes = [];
+      this.envs = [];
+      this.commands = [];
       requestAnimationFrame(() => {
         this.$refs.obs.validate();
       });
@@ -257,36 +305,6 @@ export default {
     eventClose() {
       this.$emit("eventClose");
       this.reset();
-    },
-    addMoreVolumes() {
-      this.volumes.push({
-        volume: {
-          host: "",
-          container: ""
-        }
-      });
-    },
-    removeVolumes() {
-      this.volumes.pop();
-    },
-    addMoreEnv() {
-      this.envs.push({
-        env: {
-          key: "",
-          value: ""
-        }
-      });
-    },
-    removeEnv() {
-      this.envs.pop();
-    },
-    addMoreCommand() {
-      this.commands.push({
-        command: ""
-      });
-    },
-    removeCommand() {
-      this.commands.pop();
     },
     async addNewContainer() {
       if (this.volumes.length > 0) {
@@ -309,17 +327,27 @@ export default {
           this.command.push(command.command);
         });
       }
+
+      if (this.bindPorts.length > 0) {
+        this.bindPort = [];
+
+        this.bindPorts.forEach(bindPort => {
+          const { external, internal } = bindPort;
+          (this.bindPort[external] = [{ HostPort: internal }]), this.bindPort;
+        });
+      }
       this.model.order = this.form.order;
       this.model.config = this.form.config;
       this.model.config.Cmd = this.command;
       this.model.config.Env = this.env;
       this.model.config.HostConfig = {};
       this.model.config.HostConfig.Binds = this.volume;
+      this.model.config.HostConfig.PortBindings = this.bindPort;
 
       try {
         const result = await this.$axios.post(
           `/api/container/create/${this.id}`,
-          this.form,
+          this.model,
           {
             headers: this.user.headers
           }

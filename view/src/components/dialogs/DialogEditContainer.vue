@@ -64,6 +64,14 @@
           label="Work Dir."
         ></v-text-field>
 
+        <v-text-field
+          v-model="form.config.HostConfig.NetworkMode"
+          outlined
+          rounded
+          dense
+          label="Network Mode, ex.: network-app-xyz"
+        ></v-text-field>
+
         <v-divider></v-divider>
 
         <v-checkbox
@@ -120,6 +128,35 @@
                   rounded
                   dense
                   label="Container, ex.: /home/document/src"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </div>
+        </div>
+        <v-divider></v-divider>
+
+        <div>
+          <h2>Bind Ports</h2>
+          <PlusButton @eventClick="addMorePortBind()" />
+          <MinorButton @eventClick="removePortBind()" />
+          <div v-for="port in bindPorts" :key="port.index" class="ma-2">
+            <v-row>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="port.external"
+                  outlined
+                  rounded
+                  dense
+                  label="External Port, ex.: '8000/tcp'"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" md="6">
+                <v-text-field
+                  v-model="port.internal"
+                  outlined
+                  rounded
+                  dense
+                  label="Internal Port, ex.: 80"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -230,12 +267,18 @@ export default {
       },
 
       volumes: [],
-      envs: [],
-      commands: [],
-      model: {},
       volume: [],
+
+      envs: [],
       env: [],
-      command: []
+
+      commands: [],
+      command: [],
+
+      bindPorts: [],
+      bindPort: null,
+
+      model: {}
     };
   },
   watch: {
@@ -260,6 +303,7 @@ export default {
       this.commands = [];
       this.envs = [];
       this.volumes = [];
+      this.bindPort = [];
 
       this.form.config.Cmd.forEach(command => {
         this.commands.push({
@@ -282,6 +326,14 @@ export default {
           container: newVolume[1]
         });
       });
+
+      // const newPortBind = this.form.config.HostConfig.PortBindings;
+      console.log(this.form.config.HostConfig);
+
+      // this.volumes.push({
+      //   host: newVolume[0],
+      //   container: newVolume[1]
+      // });
     },
     eventClose() {
       this.$emit("eventClose");
@@ -317,6 +369,15 @@ export default {
     removeCommand() {
       this.commands.pop();
     },
+    addMorePortBind() {
+      this.bindPorts.push({
+        external: "",
+        internal: ""
+      });
+    },
+    removePortBind() {
+      this.bindPorts.pop();
+    },
     async updateContainer() {
       if (this.volumes.length > 0) {
         this.volume = [];
@@ -338,17 +399,28 @@ export default {
           this.command.push(command.command);
         });
       }
+
+      if (this.bindPorts.length > 0) {
+        this.bindPort = null;
+
+        this.bindPorts.forEach(bindPort => {
+          const { external, internal } = bindPort;
+          (this.bindPort[external] = [{ HostPort: internal }]), this.bindPort;
+        });
+      }
+
       this.model.order = this.form.order;
       this.model.config = this.form.config;
       this.model.config.Cmd = this.command;
       this.model.config.Env = this.env;
       this.model.config.HostConfig = {};
       this.model.config.HostConfig.Binds = this.volume;
+      this.model.config.HostConfig.PortBindings = this.bindPort;
 
       try {
         const result = await this.$axios.put(
           `/api/container/update/${this.container.id}`,
-          this.form,
+          this.model,
           {
             headers: this.user.headers
           }
