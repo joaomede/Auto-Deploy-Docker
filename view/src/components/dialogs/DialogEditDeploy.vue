@@ -45,6 +45,7 @@
           ></v-checkbox>
 
           <ValidationProvider
+            v-if="!form.local"
             name="host"
             :rules="{ required }"
             v-slot="{ errors, valid }"
@@ -62,6 +63,7 @@
           </ValidationProvider>
 
           <ValidationProvider
+            v-if="!form.local"
             name="port"
             :rules="{ required }"
             v-slot="{ errors, valid }"
@@ -147,7 +149,17 @@ export default {
   },
   watch: {
     dialog: "update",
-    dialogComponent: "close"
+    dialogComponent: "close",
+    form: {
+      handler(value) {
+        if (value.local === true) {
+          this.required = false;
+        } else {
+          this.required = true;
+        }
+      },
+      deep: true
+    }
   },
   methods: {
     update() {
