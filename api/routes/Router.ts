@@ -1,7 +1,6 @@
 import { Router } from 'express'
 import cDeploy from '../controllers/Deploy'
 import cContainer from '../controllers/Container'
-import cDocker from '../controllers/Docker'
 import CheckJwt from '../middlewares/CheckJwt'
 const routes = Router()
 
@@ -47,12 +46,6 @@ routes.get(
 routes.put(
   '/api/container/update/:containerId',
   cContainer.update
-)
-
-// WebHook
-routes.post(
-  '/api/deploy/webhook/:secret',
-  cDocker.deploy
 )
 
 export default routes
