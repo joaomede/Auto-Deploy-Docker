@@ -17,7 +17,6 @@
     <v-content>
       <router-view />
     </v-content>
-    testandoasdas
     <Footer />
   </v-app>
 </template>
