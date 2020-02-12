@@ -29,10 +29,13 @@ it is possible to define:
 - Image Name
 - Container Name 
 - Commands
-- Volume bind
+- Volume Bindings
+- Networks (for now only bridge)
 - Work Dir.
 - Environments variables
 - Tty
+- Exposed Ports
+- Port Bindings 
 - and more settings...
 
 
