@@ -8,6 +8,9 @@ For automatic deployment.
 ## ABOUT
 Auto Deploy Docker, as its name suggests, is a container deployment automation, if you have a container and intend to deploy it automatically, this is a tool that promises to solve, for that, it will use Webhook to fire the triggers and perform backend routines to stop the container, remove, clean old images and recreates everything again, lets play!
 
+<a href="https://www.buymeacoffee.com/iSTozIC" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/lato-blue.png" alt="Buy Me A Coffee" style="height: 35px !important;width: 150px !important;" ></a>
+
+
 ## QuickStart with docker-compose
 ```sh
 version: "3.3"
