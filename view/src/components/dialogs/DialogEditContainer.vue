@@ -167,7 +167,7 @@
                   outlined
                   rounded
                   dense
-                  label="External Port, ex.: '8000/tcp'"
+                  label="External Port, ex.: '8000'"
                 ></v-text-field>
               </v-col>
               <v-col cols="12" md="6">
@@ -176,7 +176,7 @@
                   outlined
                   rounded
                   dense
-                  label="Internal Port, ex.: 80"
+                  label="Internal Port, ex.: 80/tcp"
                 ></v-text-field>
               </v-col>
             </v-row>
@@ -361,8 +361,8 @@ export default {
           this.form.config.HostConfig.PortBindings
         );
         entriesPortBind.forEach(entries => {
-          const external = entries[0];
-          const internal = entries[1][0].HostPort;
+          const external = entries[1][0].HostPort;
+          const internal = entries[0];
           this.bindPorts.push({
             external: external,
             internal: internal
@@ -385,7 +385,6 @@ export default {
 
         form.order = this.form.order;
         form.config = this.form.config;
-        form.config.HostConfig = {};
 
         if (this.envs.length > 0) {
           this.env = [];
@@ -419,7 +418,7 @@ export default {
         if (this.bindPorts.length > 0) {
           this.bindPorts.forEach(bP => {
             const { external, internal } = bP;
-            (bindPort[external] = [{ HostPort: internal }]), bindPort;
+            (bindPort[internal] = [{ HostPort: external }]), bindPort;
           });
           form.config.HostConfig.PortBindings = bindPort;
         }
