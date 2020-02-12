@@ -22,6 +22,7 @@
   "scripts": {
     "build": "rimraf dist/ && sucrase ./api -d ./dist --transforms typescript,imports",
     "dev": "nodemon api/server.ts",
+    "test": "rimraf mydb.sqlite && jest --runInBand",
     "start:dev": "sucrase-node api/server.ts",
     "migrate": "sucrase-node api/db/migrate",
     "migrate:down": "sucrase-node api/db/migratedown",
