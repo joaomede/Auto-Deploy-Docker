@@ -230,7 +230,7 @@ import MinorButton from "../button/MinorButton";
 import PlusButton from "../button/PlusButton";
 import BlackButton from "../button/BlackButton";
 import GreenButtonValid from "../button/GreenButtonValid";
-import ExtendAddNewContainer from "../../mixins/extendAddNewContainer";
+import utilsNewContainer from "../../mixins/utilsNewContainer";
 
 export default {
   components: {
@@ -247,7 +247,7 @@ export default {
       type: String
     }
   },
-  mixins: [ExtendAddNewContainer],
+  mixins: [utilsNewContainer],
   data() {
     return {
       newDialog: false,
@@ -269,18 +269,9 @@ export default {
       },
 
       volumes: [],
-      volume: [],
-
       envs: [],
-      env: [],
-
       commands: [],
-      command: [],
-
-      bindPorts: [],
-      bindPort: [],
-
-      model: {}
+      bindPorts: []
     };
   },
   watch: {
@@ -293,6 +284,7 @@ export default {
       this.volumes = [];
       this.envs = [];
       this.commands = [];
+      this.bindPorts = [];
       requestAnimationFrame(() => {
         this.$refs.obs.validate();
       });
@@ -306,48 +298,56 @@ export default {
       this.$emit("eventClose");
       this.reset();
     },
+    async newForm() {
+      return new Promise(resolve => {
+        let form = {};
+        let volume = [];
+        let command = [];
+        let env = [];
+        let bindPort = {};
+
+        form.order = this.form.order;
+        form.config = this.form.config;
+        form.config.HostConfig = {};
+
+        if (this.envs.length > 0) {
+          this.env = [];
+          this.envs.forEach(environment => {
+            env.push(environment.key + "=" + environment.value);
+          });
+          form.config.Env = env;
+        }
+
+        if (this.commands.length > 0) {
+          this.commands.forEach(cmd => {
+            command.push(cmd.command);
+          });
+          form.config.Cmd = command;
+        }
+
+        if (this.volumes.length > 0) {
+          this.volumes.forEach(vol => {
+            volume.push(vol.host + ":" + vol.container);
+          });
+          form.config.HostConfig.Binds = volume;
+        }
+
+        if (this.bindPorts.length > 0) {
+          this.bindPorts.forEach(bP => {
+            const { external, internal } = bP;
+            (bindPort[external] = [{ HostPort: internal }]), bindPort;
+          });
+          form.config.HostConfig.PortBindings = bindPort;
+        }
+        resolve(form);
+      });
+    },
     async addNewContainer() {
-      if (this.volumes.length > 0) {
-        this.volume = [];
-        this.volumes.forEach(volume => {
-          this.volume.push(volume.host + ":" + volume.container);
-        });
-      }
-
-      if (this.envs.length > 0) {
-        this.env = [];
-        this.envs.forEach(env => {
-          this.env.push(env.key + "=" + env.value);
-        });
-      }
-
-      if (this.commands.length > 0) {
-        this.command = [];
-        this.commands.forEach(command => {
-          this.command.push(command.command);
-        });
-      }
-
-      if (this.bindPorts.length > 0) {
-        this.bindPort = [];
-
-        this.bindPorts.forEach(bindPort => {
-          const { external, internal } = bindPort;
-          (this.bindPort[external] = [{ HostPort: internal }]), this.bindPort;
-        });
-      }
-      this.model.order = this.form.order;
-      this.model.config = this.form.config;
-      this.model.config.Cmd = this.command;
-      this.model.config.Env = this.env;
-      this.model.config.HostConfig = {};
-      this.model.config.HostConfig.Binds = this.volume;
-      this.model.config.HostConfig.PortBindings = this.bindPort;
-
       try {
+        const form = await this.newForm();
         const result = await this.$axios.post(
           `/api/container/create/${this.id}`,
-          this.model,
+          form,
           {
             headers: this.user.headers
           }
@@ -376,7 +376,6 @@ export default {
           HostConfig: {}
         }
       };
-      this.model = {};
     }
   }
 };
