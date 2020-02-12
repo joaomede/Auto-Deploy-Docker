@@ -6,6 +6,51 @@ For automatic deployment.
 ## ABOUT
 Auto Deploy Docker, as its name suggests, is a container deployment automation, if you have a container and intend to deploy it automatically, this is a tool that promises to solve, for that, it will use Webhook to fire the triggers and perform backend routines to stop the container, remove, clean old images and recreates everything again, lets play!
 
+## QuickStart with docker-compose
+```sh
+version: "3.3"
+
+services:
+  pg:
+    image: postgres:11.5-alpine
+    container_name: pg-database-auto-deploy
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: databaseName
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+      - "/etc/localtime:/etc/localtime:ro"
+    networks:
+      - autodeploy-network
+
+  server:
+    image: joaomede/auto-deploy-docker:v1.0.0
+    container_name: "server-auto-deploy"
+    depends_on:
+      - pg
+    environment:
+      HOSTDB: pg-database-auto-deploy
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: databaseName
+      NODE_ENV: dev
+      EMAIL: email@gmail.com
+      PASSWORDSMTP: passwordEmail
+      SECRET: youApiKeySecret
+    ports:
+      - 8080:80
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - autodeploy-network
+
+networks:
+  apidoc-network:
+    driver: bridge
+```
+
 ## In what use case would this be useful to me?
 * Question 1 - I have a fully insulated container in the docker, it depends on 2 other containers, all need bind volumes, to store persistent data safely, in addition to needing environment variables and commands, does this system suit me?
 > Yes, Auto Deploy Container is designed for that specific need
