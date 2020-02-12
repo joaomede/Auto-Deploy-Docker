@@ -1,4 +1,5 @@
-[![Build Status](https://travis-ci.com/joaomede/Auto-Deploy-Docker.svg?branch=master)](https://travis-ci.com/joaomede/Auto-Deploy-Docker) ![GitHub](https://img.shields.io/github/license/joaomede/Auto-Deploy-Docker) ![GitHub package.json version](https://img.shields.io/github/package-json/v/joaomede/Auto-Deploy-Docker) ![GitHub repo size](https://img.shields.io/github/repo-size/joaomede/Auto-Deploy-Docker)
+[![Build Status](https://travis-ci.com/joaomede/Auto-Deploy-Docker.svg?branch=master)](https://travis-ci.com/joaomede/Auto-Deploy-Docker) [![codecov](https://codecov.io/gh/joaomede/Auto-Deploy-Docker/branch/master/graph/badge.svg)](https://codecov.io/gh/joaomede/Auto-Deploy-Docker)
+ ![GitHub](https://img.shields.io/github/license/joaomede/Auto-Deploy-Docker) ![GitHub package.json version](https://img.shields.io/github/package-json/v/joaomede/Auto-Deploy-Docker) ![GitHub repo size](https://img.shields.io/github/repo-size/joaomede/Auto-Deploy-Docker)
 
 
 # Auto Deploy Docker
