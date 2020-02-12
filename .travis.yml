@@ -17,6 +17,7 @@ cache:
 
 script: echo "npm test temporarily disabled"
 
+scripts:
+  - npm install codecov -g
 after_success:
-  - bash <(curl -s https://codecov.io/bash)
-
+  - codecov
