@@ -11,6 +11,10 @@ export default new class Actions {
       const config = containerList[index].config as ContainerCreateOptions
       const dockerode = actions.createInstance(deploy)
 
+      if (config.HostConfig.NetworkMode !== undefined && config.HostConfig.NetworkMode !== '') {
+        await actions.createNetwork(dockerode, config)
+      }
+
       const container = actions.containerObject(dockerode, config.name)
       message[0] = '1 - inspeciona container'
       console.log(message[0])
@@ -135,6 +139,14 @@ export default new class Actions {
     } catch (error) {
       console.log(error)
       throw new Error(error.message)
+    }
+  }
+
+  public async createNetwork (dockerode: Dockerode, config: ContainerCreateOptions): Promise<void> {
+    try {
+      await dockerode.createNetwork({ Name: config.HostConfig.NetworkMode, CheckDuplicate: true })
+    } catch (error) {
+      console.log(error.message)
     }
   }
 
