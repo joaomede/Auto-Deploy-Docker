@@ -107,6 +107,26 @@
         <v-divider></v-divider>
 
         <div>
+          <h2>Exposed Ports</h2>
+          <PlusButton @eventClick="addMorePortExposed()" />
+          <MinorButton @eventClick="removePortExposed()" />
+          <div
+            v-for="exposed in exposedPorts"
+            :key="exposed.index"
+            class="ma-2"
+          >
+            <v-text-field
+              v-model="exposed.port"
+              outlined
+              rounded
+              dense
+              label="Exposed Port. ex.: 22/tcp"
+            ></v-text-field>
+          </div>
+        </div>
+        <v-divider></v-divider>
+
+        <div>
           <h2>Bind Volumes</h2>
           <PlusButton @eventClick="addMoreVolumes()" />
           <MinorButton @eventClick="removeVolumes()" />
@@ -271,7 +291,8 @@ export default {
       volumes: [],
       envs: [],
       commands: [],
-      bindPorts: []
+      bindPorts: [],
+      exposedPorts: []
     };
   },
   watch: {
@@ -281,10 +302,6 @@ export default {
   methods: {
     update() {
       this.newDialog = this.dialog;
-      this.volumes = [];
-      this.envs = [];
-      this.commands = [];
-      this.bindPorts = [];
       requestAnimationFrame(() => {
         this.$refs.obs.validate();
       });
@@ -305,6 +322,7 @@ export default {
         let command = [];
         let env = [];
         let bindPort = {};
+        let exposedPort = {};
 
         form.order = this.form.order;
         form.config = this.form.config;
@@ -325,6 +343,13 @@ export default {
           form.config.Cmd = command;
         }
 
+        if (this.exposedPorts.length > 0) {
+          this.exposedPorts.forEach(port => {
+            (exposedPort[port.port] = {}), exposedPort;
+          });
+          form.config.ExposedPorts = exposedPort;
+        }
+
         if (this.volumes.length > 0) {
           this.volumes.forEach(vol => {
             volume.push(vol.host + ":" + vol.container);
@@ -339,6 +364,7 @@ export default {
           });
           form.config.HostConfig.PortBindings = bindPort;
         }
+
         resolve(form);
       });
     },
@@ -360,6 +386,12 @@ export default {
       }
     },
     reset() {
+      this.volumes = [];
+      this.envs = [];
+      this.commands = [];
+      this.bindPorts = [];
+      this.exposedPorts = [];
+
       this.form = {
         order: 1,
         config: {

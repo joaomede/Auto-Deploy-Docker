@@ -107,6 +107,26 @@
         <v-divider></v-divider>
 
         <div>
+          <h2>Exposed Ports</h2>
+          <PlusButton @eventClick="addMorePortExposed()" />
+          <MinorButton @eventClick="removePortExposed()" />
+          <div
+            v-for="exposed in exposedPorts"
+            :key="exposed.index"
+            class="ma-2"
+          >
+            <v-text-field
+              v-model="exposed.port"
+              outlined
+              rounded
+              dense
+              label="Exposed Port. ex.: 22/tcp"
+            ></v-text-field>
+          </div>
+        </div>
+        <v-divider></v-divider>
+
+        <div>
           <h2>Bind Volumes</h2>
           <PlusButton @eventClick="addMoreVolumes()" />
           <MinorButton @eventClick="removeVolumes()" />
@@ -271,7 +291,8 @@ export default {
       volumes: [],
       envs: [],
       commands: [],
-      bindPorts: []
+      bindPorts: [],
+      exposedPorts: []
     };
   },
   watch: {
@@ -297,12 +318,25 @@ export default {
       this.envs = [];
       this.volumes = [];
       this.bindPorts = [];
+      this.exposedPorts = [];
 
       this.form.config.Cmd.forEach(command => {
         this.commands.push({
           command: command
         });
       });
+
+      if (this.form.config.ExposedPorts !== undefined) {
+        const entriesExposedPort = Object.entries(
+          this.form.config.ExposedPorts
+        );
+        entriesExposedPort.forEach(entries => {
+          const port = entries[0];
+          this.exposedPorts.push({
+            port: port
+          });
+        });
+      }
 
       this.form.config.Env.forEach(env => {
         const newEnv = env.split("=");
@@ -347,6 +381,7 @@ export default {
         let command = [];
         let env = [];
         let bindPort = {};
+        let exposedPort = {};
 
         form.order = this.form.order;
         form.config = this.form.config;
@@ -365,6 +400,13 @@ export default {
             command.push(cmd.command);
           });
           form.config.Cmd = command;
+        }
+
+        if (this.exposedPorts.length > 0) {
+          this.exposedPorts.forEach(port => {
+            (exposedPort[port.port] = {}), exposedPort;
+          });
+          form.config.ExposedPorts = exposedPort;
         }
 
         if (this.volumes.length > 0) {

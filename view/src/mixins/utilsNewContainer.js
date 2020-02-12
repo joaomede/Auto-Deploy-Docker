@@ -38,6 +38,14 @@ export default {
     },
     removePortBind() {
       this.bindPorts.pop();
+    },
+    addMorePortExposed() {
+      this.exposedPorts.push({
+        port: ""
+      });
+    },
+    removePortExposed() {
+      this.exposedPorts.pop();
     }
   }
 };
