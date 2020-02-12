@@ -47,7 +47,7 @@ services:
       - autodeploy-network
 
 networks:
-  apidoc-network:
+  autodeploy-network:
     driver: bridge
 ```
 
