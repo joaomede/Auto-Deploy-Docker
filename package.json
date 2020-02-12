@@ -1,6 +1,6 @@
 {
   "name": "auto-deploy-docker",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A Technology for automatic deployment using docker",
   "author": "João Medeiros N. Jr - <symbol2studio@gmail.com> (https://symbol2.com.br/)",
   "homepage": "http://github.com/joaomede/AutoDeployDocker#readme",
