@@ -154,7 +154,7 @@ export default new class Actions {
     try {
       await newContainer.start()
     } catch (error) {
-      console.log('6.e - Erro ao tentar iniciar o container')
+      console.log('6.e - Erro ao tentar iniciar o container - ' + error.message)
       return error
     }
   }
