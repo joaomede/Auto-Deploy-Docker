@@ -7,9 +7,16 @@ import { env } from '../config/env'
 import * as jwt from 'jsonwebtoken'
 import bcrypt = require('bcrypt')
 
-export default new class Auth {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async register (req: Request, res: Response): Promise<any> {
+class Auth {
+  /**
+   * Register a new user
+   *
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof Auth
+   */
+  public async register (req: Request, res: Response): Promise<void> {
     const { email, password } = req.body
     try {
       const result = await knex('users').select().where('email', email)
@@ -37,8 +44,15 @@ export default new class Auth {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async auth (req: Request, res: Response): Promise<any> {
+  /**
+   * Authenticates a user
+   *
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<any>}
+   * @memberof Auth
+   */
+  public async auth (req: Request, res: Response): Promise<void> {
     const { email, password } = req.body
 
     try {
@@ -63,13 +77,19 @@ export default new class Auth {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public async changePassword (req: NewRequest, res: Response): Promise<any> {
+  /**
+   * Change Password
+   *
+   * @param {NewRequest} req
+   * @param {Response} res
+   * @returns {Promise<any>}
+   * @memberof Auth
+   */
+  public async changePassword (req: NewRequest, res: Response): Promise<void> {
     const { passwordOne, passwordTwo } = req.body
     const authHeader = req.headers.authorization
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    async function changePass (decoded): Promise<any> {
+    async function changePass (decoded): Promise<void> {
       try {
         const password = await bcrypt.hash(passwordOne, 10)
         await knex('users').where({ id: decoded.id }).update({ password: password })
@@ -102,4 +122,6 @@ export default new class Auth {
       })
     }
   }
-}()
+}
+
+export default new Auth()

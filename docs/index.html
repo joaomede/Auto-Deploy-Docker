@@ -1,0 +1,384 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>auto-deploy-docker</title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.js" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">auto-deploy-docker</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+							<input type="checkbox" id="tsd-filter-only-exported" />
+							<label class="tsd-widget" for="tsd-filter-only-exported">Only exported</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>auto-deploy-docker</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<p><a href="https://travis-ci.com/joaomede/Auto-Deploy-Docker"><img src="https://travis-ci.com/joaomede/Auto-Deploy-Docker.svg?branch=master" alt="Build Status"></a> <a href="https://codecov.io/gh/joaomede/Auto-Deploy-Docker"><img src="https://codecov.io/gh/joaomede/Auto-Deploy-Docker/branch/master/graph/badge.svg" alt="codecov"></a>
+				<img src="https://img.shields.io/github/license/joaomede/Auto-Deploy-Docker" alt="GitHub"> <img src="https://img.shields.io/github/package-json/v/joaomede/Auto-Deploy-Docker" alt="GitHub package.json version"> <img src="https://img.shields.io/github/repo-size/joaomede/Auto-Deploy-Docker" alt="GitHub repo size"></p>
+				<a href="#auto-deploy-docker" id="auto-deploy-docker" style="color: inherit; text-decoration: none;">
+					<h1>Auto Deploy Docker</h1>
+				</a>
+				<p>For automatic deployment.</p>
+				<a href="#about" id="about" style="color: inherit; text-decoration: none;">
+					<h2>ABOUT</h2>
+				</a>
+				<p>Auto Deploy Docker, as its name suggests, is a container deployment automation, if you have a container and intend to deploy it automatically, this is a tool that promises to solve, for that, it will use Webhook to fire the triggers and perform backend routines to stop the container, remove, clean old images and recreates everything again, lets play!</p>
+				<p><a href="https://www.buymeacoffee.com/iSTozIC" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/lato-blue.png" alt="Buy Me A Coffee" style="height: 35px !important;width: 150px !important;" ></a></p>
+				<a href="#quickstart-with-docker-compose" id="quickstart-with-docker-compose" style="color: inherit; text-decoration: none;">
+					<h2>QuickStart with docker-compose</h2>
+				</a>
+				<pre><code class="language-sh">version: <span class="hljs-string">"3.3"</span>
+
+services:
+  pg:
+    image: postgres:11.5-alpine
+    container_name: pg-database-auto-deploy
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: databaseName
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+      - <span class="hljs-string">"/etc/localtime:/etc/localtime:ro"</span>
+    networks:
+      - autodeploy-network
+
+  server:
+    image: joaomede/auto-deploy-docker:v1.0.0
+    container_name: <span class="hljs-string">"server-auto-deploy"</span>
+    depends_on:
+      - pg
+    environment:
+      HOSTDB: pg-database-auto-deploy
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: databaseName
+      NODE_ENV: dev
+      EMAIL: email@gmail.com
+      PASSWORDSMTP: passwordEmail
+      SECRET: youApiKeySecret
+    ports:
+      - 8080:80
+    volumes:
+      - <span class="hljs-string">"/etc/localtime:/etc/localtime:ro"</span>
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - autodeploy-network
+
+networks:
+  autodeploy-network:
+    driver: bridge</code></pre>
+				<a href="#in-what-use-case-would-this-be-useful-to-me" id="in-what-use-case-would-this-be-useful-to-me" style="color: inherit; text-decoration: none;">
+					<h2>In what use case would this be useful to me?</h2>
+				</a>
+				<ul>
+					<li><p>Question 1 - I have a fully insulated container in the docker, it depends on 2 other containers, all need bind volumes, to store persistent data safely, in addition to needing environment variables and commands, does this system suit me?</p>
+						<blockquote>
+							<p>Yes, Auto Deploy Container is designed for that specific need</p>
+						</blockquote>
+					</li>
+					<li><p>Question 2 - I have several virtual machines with a docker, is it possible to deploy remotely, that is, I schedule deployments on several different machines with this system?</p>
+						<blockquote>
+							<p>Yes, it is possible, however, each &quot;deploy project&quot; can have 1 or more containers, the remote target will be associated with the entity &quot;project deploy&quot; and not with the &quot;containers&quot; contained in the &quot;project.&quot;</p>
+						</blockquote>
+					</li>
+					<li><p>Question 3 - Can I connect to a private registry with this technology?</p>
+						<blockquote>
+							<p>Yes, and No, if the remote machine, targeting the automation, is configured with a private registry, or has a private registry locally, the automation will certainly work, however, it will be necessary to properly inform the name of the image when configuring the template, also if configured by the composer or via Bash</p>
+						</blockquote>
+					</li>
+				</ul>
+				<a href="#in-what-case-will-it-not-serve-me" id="in-what-case-will-it-not-serve-me" style="color: inherit; text-decoration: none;">
+					<h2>In what case will it not serve me?</h2>
+				</a>
+				<ul>
+					<li><p>Question 1 - My container depends on files and external builds, that through the bind volume, it runs the application, will it work?  </p>
+						<blockquote>
+							<p>R - At first, no, if your container has entrypoints to solve everything, do git clones and perform update routines &quot;something unusual&quot;, it may even work, but this system was designed for autonomous containers and not for hybrid &quot;container + external things. &quot;.</p>
+						</blockquote>
+					</li>
+					<li><p>Question 2 - My container is just an environment, it is incomplete, it requires a lot of manual settings, like installing local application and various types of volume binds, I can configure it with this automatic deployment system.  </p>
+						<blockquote>
+							<p>R - No, as stated earlier, the deployment will only take place well with fully insulated containers and prepared to run quickly</p>
+						</blockquote>
+					</li>
+				</ul>
+				<a href="#ok-i-want-to-use-what-kind-of-parameter-can-i-define" id="ok-i-want-to-use-what-kind-of-parameter-can-i-define" style="color: inherit; text-decoration: none;">
+					<h2>Ok, I want to use, what kind of parameter can I define?</h2>
+				</a>
+				<p>it is possible to define:</p>
+				<ul>
+					<li>Image Name</li>
+					<li>Container Name </li>
+					<li>Commands</li>
+					<li>Volume Bindings</li>
+					<li>Networks (for now only bridge)</li>
+					<li>Work Dir.</li>
+					<li>Environments variables</li>
+					<li>Tty</li>
+					<li>Exposed Ports</li>
+					<li>Port Bindings </li>
+					<li>and more settings...</li>
+				</ul>
+				<a href="#i-understand-that-he-performs-a-routine-what-are-the-steps-of-these-routines" id="i-understand-that-he-performs-a-routine-what-are-the-steps-of-these-routines" style="color: inherit; text-decoration: none;">
+					<h2>I understand that he performs a routine, what are the steps of these routines?</h2>
+				</a>
+				<ul>
+					<li>1 Stop the container</li>
+					<li>2 Remove the container</li>
+					<li>3 Remove self-image (if possible - for machine hygiene)</li>
+					<li>4 Downloading a newest Tag Image (setted in container template)</li>
+					<li>5 Recreates the container</li>
+					<li>6 Start a new container</li>
+					<li>7 Sends the report via email.</li>
+				</ul>
+				<blockquote>
+					<p>This routine may vary according to specific problems, such as the fact that the container already exists, or the image cannot be removed (because it is in use by other containers)</p>
+				</blockquote>
+				<a href="#what-is-this-made-of" id="what-is-this-made-of" style="color: inherit; text-decoration: none;">
+					<h2>What is this made of?</h2>
+				</a>
+				<p>In the backend there is an Api Rest, which is responsible for a simple (CRUD) that allows the creation of deploy projects and container templates, including also the user entity for system security, in addition to the API Rest, there is the core of the application, which would be the routines of deployment, they are responsible for implementing the system, the entire backend was written in typescript and most of it is asynchronous, on the client side, &quot;Frontend&quot;, there is Vuejs with some dependencies.</p>
+				<a href="#api-rest" id="api-rest" style="color: inherit; text-decoration: none;">
+					<h2>API Rest</h2>
+				</a>
+				<p>List of All Endpoints</p>
+				<pre><code class="language-sh"><span class="hljs-comment"># Endpoints User</span>
+POST: /api/auth/login
+POST: /api/auth/register
+PUT: /api/auth/changepassword
+
+<span class="hljs-comment"># Endpoints Deploy</span>
+POST: /api/deploy/create
+DELETE: /api/deploy/delete/:deployId
+GET: /api/deploy/getall
+PUT: /api/deploy/update/:deployId
+
+<span class="hljs-comment"># Endpoints Container</span>
+POST: /api/container/create/:deployId
+DELETE: /api/container/delete/:deployId
+GET: /api/container/getall/:deployId
+PUT: /api/container/update/:containerId
+
+<span class="hljs-comment"># WebHook</span>
+POST: /api/deploy/webhook/:secret</code></pre>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_app_.html">&quot;<wbr>App&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_config_env_.html">&quot;config/env&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_config_smtp_.html">&quot;config/smtp&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_controllers_actions_.html">&quot;controllers/<wbr>Actions&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_controllers_auth_.html">&quot;controllers/<wbr>Auth&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_controllers_checkin_.html">&quot;controllers/<wbr>Checkin&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_controllers_container_.html">&quot;controllers/<wbr>Container&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_controllers_deploy_.html">&quot;controllers/<wbr>Deploy&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_controllers_docker_.html">&quot;controllers/<wbr>Docker&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_db_connection_.html">&quot;db/connection&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_db_migrate_.html">&quot;db/migrate&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_db_migratedown_.html">&quot;db/migratedown&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_interface_interfaces_.html">&quot;interface/<wbr>Interfaces&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_interface_newrequest_.html">&quot;interface/<wbr>New<wbr>Request&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_knexfile_.html">&quot;knexfile&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_middlewares_checkjwt_.html">&quot;middlewares/<wbr>Check<wbr>Jwt&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_01_user_.html">&quot;migrations/01_<wbr>user&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_02_deploy_.html">&quot;migrations/02_<wbr>deploy&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_migrations_03_container_.html">&quot;migrations/03_<wbr>container&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_modules_sendmail_.html">&quot;modules/<wbr>Send<wbr>Mail&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_plugin_plugin_.html">&quot;plugin/<wbr>Plugin&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_query_containerquery_.html">&quot;query/container<wbr>Query&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_query_deployquery_.html">&quot;query/deploy<wbr>Query&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_router_.html">&quot;routes/<wbr>Router&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_routerauth_.html">&quot;routes/<wbr>Router<wbr>Auth&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_routes_routercheckin_.html">&quot;routes/<wbr>Router<wbr>Checkin&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_server_.html">&quot;server&quot;</a>
+					</li>
+					<li class=" tsd-kind-external-module">
+						<a href="modules/_utils_validation_.html">&quot;utils/<wbr>Validation&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-module"><span class="tsd-kind-icon">Module</span></li>
+				<li class="tsd-kind-object-literal"><span class="tsd-kind-icon">Object literal</span></li>
+				<li class="tsd-kind-variable"><span class="tsd-kind-icon">Variable</span></li>
+				<li class="tsd-kind-function"><span class="tsd-kind-icon">Function</span></li>
+				<li class="tsd-kind-function tsd-has-type-parameter"><span class="tsd-kind-icon">Function with type parameter</span></li>
+				<li class="tsd-kind-index-signature"><span class="tsd-kind-icon">Index signature</span></li>
+				<li class="tsd-kind-type-alias"><span class="tsd-kind-icon">Type alias</span></li>
+				<li class="tsd-kind-type-alias tsd-has-type-parameter"><span class="tsd-kind-icon">Type alias with type parameter</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-enum"><span class="tsd-kind-icon">Enumeration</span></li>
+				<li class="tsd-kind-enum-member"><span class="tsd-kind-icon">Enumeration member</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-enum"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-enum"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-interface"><span class="tsd-kind-icon">Interface</span></li>
+				<li class="tsd-kind-interface tsd-has-type-parameter"><span class="tsd-kind-icon">Interface with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-interface"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-interface"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-interface"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+				<li class="tsd-kind-class tsd-has-type-parameter"><span class="tsd-kind-icon">Class with type parameter</span></li>
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class"><span class="tsd-kind-icon">Accessor</span></li>
+				<li class="tsd-kind-index-signature tsd-parent-kind-class"><span class="tsd-kind-icon">Index signature</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-inherited"><span class="tsd-kind-icon">Inherited accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+				<li class="tsd-kind-accessor tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private accessor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static property</span></li>
+				<li class="tsd-kind-call-signature tsd-parent-kind-class tsd-is-static"><span class="tsd-kind-icon">Static method</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

@@ -3,7 +3,15 @@ import { Response } from 'express'
 import resp from 'resp-express'
 import query from '../query/deployQuery'
 
-export default new class Deploy {
+class Deploy {
+  /**
+   * Creates a new deploy
+   *
+   * @param {NewRequest} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof Deploy
+   */
   public async store (req: NewRequest, res: Response): Promise<void> {
     try {
       const newDeploy = await query.createNewDeploy(req.userId, req.body)
@@ -16,6 +24,14 @@ export default new class Deploy {
     }
   }
 
+  /**
+   * Removes an existing deploy
+   *
+   * @param {NewRequest} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof Deploy
+   */
   public async destroy (req: NewRequest, res: Response): Promise<void> {
     try {
       await query.deleteDeployById(req.userId, Number(req.params.deployId))
@@ -25,6 +41,14 @@ export default new class Deploy {
     }
   }
 
+  /**
+   * Updates an existing deploy
+   *
+   * @param {NewRequest} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof Deploy
+   */
   public async update (req: NewRequest, res: Response): Promise<void> {
     try {
       await query.updateDeployById(req.userId, Number(req.params.deployId), req.body)
@@ -34,6 +58,14 @@ export default new class Deploy {
     }
   }
 
+  /**
+   * Lists all existing deployments for a user
+   *
+   * @param {NewRequest} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof Deploy
+   */
   public async indexAll (req: NewRequest, res: Response): Promise<void> {
     try {
       const listDeploy = await query.findAllDeployByUser(req.userId)
@@ -42,4 +74,6 @@ export default new class Deploy {
       resp.returnErrorMessage(res, error.message)
     }
   }
-}()
+}
+
+export default new Deploy()

@@ -1,7 +1,7 @@
 import { knex } from '../db/connection'
 import * as I from '../interface/Interfaces'
 
-export default new class ContainerQuery {
+class ContainerQuery {
   /**
    * @description Create a new Container Template
    * @param userId User ID
@@ -24,10 +24,11 @@ export default new class ContainerQuery {
   }
 
   /**
-   * find container by deploy ID foreign relationship
+   * Find container by deploy ID foreign relationship
    *
-   * @param deployId Deploy ID
-   * @returns Returns a container list
+   * @param {number} deployId Deploy ID
+   * @returns {Promise<I.Container[]>} Returns a container list
+   * @memberof ContainerQuery
    */
   public async findContainers (deployId: number): Promise<I.Container[]> {
     try {
@@ -41,10 +42,11 @@ export default new class ContainerQuery {
   /**
    * Update container
    *
-   * @param userId User ID to find container by user
-   * @param containerId Container ID to find container container by ip
-   * @param container New container form to update
-   * @returns Return a new container
+   * @param {number} userId User ID to find container by user
+   * @param {number} containerId Container ID to find container container by ID
+   * @param {I.Container} container New container form to update
+   * @returns {Promise<I.Container>} Return a new container
+   * @memberof ContainerQuery
    */
   public async updateContainerById (userId: number, containerId: number, container: I.Container): Promise<I.Container> {
     try {
@@ -65,9 +67,10 @@ export default new class ContainerQuery {
   /**
    * Find all container by user id and deploy relationship
    *
-   * @param userId User ID to find all containers
-   * @param deployId Deploy ID to foreign relationship
-   * @returns Returns a container list filter by user and deploy relationship
+   * @param {number} userId User ID to find all containers
+   * @param {number} deployId Deploy ID to foreign relationship
+   * @returns {Promise<I.Container[]>} Returns a container list filter by user and deploy relationship
+   * @memberof ContainerQuery
    */
   public async findAllContainerByUserId (userId: number, deployId: number): Promise<I.Container[]> {
     try {
@@ -84,8 +87,10 @@ export default new class ContainerQuery {
   /**
    * Delete a container by id
    *
-   * @param userId User ID to find foreign relationship
-   * @param containerId Container ID to find
+   * @param {number} userId User ID to find foreign relationship
+   * @param {number} containerId Container ID to find
+   * @returns {Promise<void>}
+   * @memberof ContainerQuery
    */
   public async deleteContainerById (userId: number, containerId: number): Promise<void> {
     try {
@@ -97,4 +102,6 @@ export default new class ContainerQuery {
       throw new Error('Erro ao tentar remover container')
     }
   }
-}()
+}
+
+export default new ContainerQuery()

@@ -2,7 +2,15 @@ import { NewRequest } from '../interface/NewRequest'
 import { Response } from 'express'
 import resp from 'resp-express'
 import containerQuery from '../query/containerQuery'
-export default new class Container {
+class Container {
+  /**
+   * Creates a new container template
+   *
+   * @param {NewRequest} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof Container
+   */
   public async store (req: NewRequest, res: Response): Promise<void> {
     try {
       const newContainer = await containerQuery.createNewContainerTemplate(
@@ -18,6 +26,14 @@ export default new class Container {
     }
   }
 
+  /**
+   * Removes an existing container
+   *
+   * @param {NewRequest} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof Container
+   */
   public async destroy (req: NewRequest, res: Response): Promise<void> {
     try {
       await containerQuery.deleteContainerById(req.userId, Number(req.params.deployId))
@@ -27,6 +43,14 @@ export default new class Container {
     }
   }
 
+  /**
+   * Update a container
+   *
+   * @param {NewRequest} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof Container
+   */
   public async update (req: NewRequest, res: Response): Promise<void> {
     try {
       const container = await containerQuery.updateContainerById(req.userId, Number(req.params.containerId), req.body)
@@ -39,6 +63,14 @@ export default new class Container {
     }
   }
 
+  /**
+   * List all containers
+   *
+   * @param {NewRequest} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof Container
+   */
   public async indexAll (req: NewRequest, res: Response): Promise<void> {
     try {
       const listContainer = await containerQuery.findAllContainerByUserId(
@@ -49,4 +81,6 @@ export default new class Container {
       resp.returnErrorMessage(res, error.message)
     }
   }
-}()
+}
+
+export default new Container()

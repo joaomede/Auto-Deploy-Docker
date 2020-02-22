@@ -1,7 +1,14 @@
 import { knex } from '../db/connection'
 import * as I from '../interface/Interfaces'
 
-export default new class DeployQuery {
+class DeployQuery {
+  /**
+   * Finds a deploy object by key
+   *
+   * @param {string} secret Secret deploy key
+   * @returns {Promise<I.Deploy>}
+   * @memberof DeployQuery
+   */
   public async findDeploy (secret: string): Promise<I.Deploy> {
     try {
       const deploy: I.Deploy[] = await knex('deploys')
@@ -15,9 +22,12 @@ export default new class DeployQuery {
   }
 
   /**
+   * Creates a new deploy
    *
-   * @param userId User ID
-   * @param body Body with "nameProject" and "secret"
+   * @param {number} userId User ID
+   * @param {*} body Body with "nameProject" and "secret"
+   * @returns {Promise<I.Deploy>}
+   * @memberof DeployQuery
    */
   public async createNewDeploy (userId: number, body: any): Promise<I.Deploy> {
     try {
@@ -44,9 +54,12 @@ export default new class DeployQuery {
   }
 
   /**
-   * @description Delete a deploy by ID
-   * @param userId User ID - for search a deploy
-   * @param deployId Deploy ID
+   * Delete a deploy by ID
+   *
+   * @param {number} userId User ID - for search a deploy
+   * @param {number} deployId Deploy ID
+   * @returns {Promise<void>}
+   * @memberof DeployQuery
    */
   public async deleteDeployById (userId: number, deployId: number): Promise<void> {
     try {
@@ -59,9 +72,11 @@ export default new class DeployQuery {
   /**
    * Update One Deploy
    *
-   * @param userId User ID to find deploy
-   * @param deploy User ID to find deploy
-   * @returns Return a void function
+   * @param {number} userId User ID to find deploy
+   * @param {number} deployId User ID to find deploy
+   * @param {I.Deploy} deployForm form containing information for updating
+   * @returns {Promise<void>}
+   * @memberof DeployQuery
    */
   public async updateDeployById (userId: number, deployId: number, deployForm: I.Deploy): Promise<void> {
     try {
@@ -74,8 +89,11 @@ export default new class DeployQuery {
   }
 
   /**
-   * @description This method find all deploy by User ID
-   * @param userId User ID - For search a deploy list
+   * This method find all deploy by User ID
+   *
+   * @param {number} userId User ID - For search a deploy list
+   * @returns {Promise<I.Deploy[]>}
+   * @memberof DeployQuery
    */
   public async findAllDeployByUser (userId: number): Promise<I.Deploy[]> {
     try {
@@ -88,4 +106,6 @@ export default new class DeployQuery {
       throw new Error('Erro in trying find all deploy by user id')
     }
   }
-}()
+}
+
+export default new DeployQuery()

@@ -5,7 +5,7 @@ import resp from 'resp-express'
 import deployQuery from '../query/deployQuery'
 import containerQuery from '../query/containerQuery'
 
-export default new class DeployContainer {
+class DeployContainer {
   public async deploy (req: NewRequest, res: Response): Promise<void> {
     const { secret } = req.params
 
@@ -18,4 +18,6 @@ export default new class DeployContainer {
       resp.returnErrorMessage(res, error.message)
     }
   }
-}()
+}
+
+export default new DeployContainer()

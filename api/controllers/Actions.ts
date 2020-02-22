@@ -4,7 +4,16 @@ import * as I from '../interface/Interfaces'
 import pluginMail from '../modules/SendMail'
 import Dockerode = require('dockerode')
 
-export default new class Actions {
+class Actions {
+  /**
+   * Start Deployment Routine
+   *
+   * @param {Actions} actions Self Instance
+   * @param {I.Container[]} containerList Container Object
+   * @param {I.Deploy} deploy Deploy Object
+   * @returns {Promise<void>}
+   * @memberof Actions
+   */
   public async startDeployRoutine (actions: Actions, containerList: I.Container[], deploy: I.Deploy): Promise<void> {
     for (let index = 0; index < containerList.length; index++) {
       let message = []
@@ -87,6 +96,15 @@ export default new class Actions {
     }
   }
 
+  /**
+   * Way there is no container
+   *
+   * @param {Actions} actions Self Instance
+   * @param {Dockerode} dockerode Instance Dockerode
+   * @param {ContainerCreateOptions} config Container create options
+   * @returns {(Promise<void | string[]>)}
+   * @memberof Actions
+   */
   public async noSuchContainer (actions: Actions, dockerode: Dockerode, config: ContainerCreateOptions): Promise<void | string[]> {
     const message = []
     try {
@@ -107,6 +125,17 @@ export default new class Actions {
     }
   }
 
+  /**
+   * Way there is a container
+   *
+   * @param {Actions} actions Self Instance
+   * @param {Dockerode} dockerode Instance Dockerode
+   * @param {Container} container Object Container
+   * @param {ContainerInspectInfo} infoContainer Object Container Inspect Info
+   * @param {ContainerCreateOptions} config Container create options
+   * @returns {Promise<string[]>}
+   * @memberof Actions
+   */
   public async hasContainer (actions: Actions, dockerode: Dockerode, container: Container, infoContainer: ContainerInspectInfo, config: ContainerCreateOptions): Promise<string[]> {
     let message = []
     const download = []
@@ -142,6 +171,14 @@ export default new class Actions {
     }
   }
 
+  /**
+   * Creates a network
+   *
+   * @param {Dockerode} dockerode Instance Dockerode
+   * @param {ContainerCreateOptions} config Container create options
+   * @returns {Promise<void>}
+   * @memberof Actions
+   */
   public async createNetwork (dockerode: Dockerode, config: ContainerCreateOptions): Promise<void> {
     try {
       await dockerode.createNetwork({ Name: config.HostConfig.NetworkMode, CheckDuplicate: true })
@@ -150,6 +187,13 @@ export default new class Actions {
     }
   }
 
+  /**
+   * Creates an Dockerode instance
+   *
+   * @param {I.Deploy} deploy Object Deploy
+   * @returns {Dockerode}
+   * @memberof Actions
+   */
   public createInstance (deploy: I.Deploy): Dockerode {
     if (deploy.local === true) {
       return new Dockerode({ socketPath: '/var/run/docker.sock' })
@@ -162,6 +206,13 @@ export default new class Actions {
     }
   }
 
+  /**
+   * Starts a container
+   *
+   * @param {Dockerode.Container} newContainer Newly created container
+   * @returns {Promise<void>}
+   * @memberof Actions
+   */
   public async startContainer (newContainer: Dockerode.Container): Promise<void> {
     try {
       await newContainer.start()
@@ -171,6 +222,13 @@ export default new class Actions {
     }
   }
 
+  /**
+   *
+   *
+   * @param {Dockerode.Container} container Container to inspect
+   * @returns {(Promise<Dockerode.ContainerInspectInfo | string>)}
+   * @memberof Actions
+   */
   public async inspectContainer (container: Dockerode.Container): Promise<Dockerode.ContainerInspectInfo | string> {
     try {
       const inspect = await container.inspect()
@@ -180,10 +238,25 @@ export default new class Actions {
     }
   }
 
+  /**
+   * Container Object Factory
+   *
+   * @param {Dockerode} docker Dockerode Instance
+   * @param {string} containerName Container Name
+   * @returns {Dockerode.Container}
+   * @memberof Actions
+   */
   public containerObject (docker: Dockerode, containerName: string): Dockerode.Container {
     return docker.getContainer(containerName)
   }
 
+  /**
+   * Stop and Remove container
+   *
+   * @param {Dockerode.Container} container Object container
+   * @returns {Promise<string[]>}
+   * @memberof Actions
+   */
   public async stopAndRemoveContainer (container: Dockerode.Container): Promise<string[]> {
     const message = []
     try {
@@ -205,6 +278,14 @@ export default new class Actions {
     }
   }
 
+  /**
+   * Create a new container
+   *
+   * @param {Dockerode} docker Dockerode Instance
+   * @param {Dockerode.ContainerCreateOptions} config Container create options
+   * @returns {Promise<Dockerode.Container>}
+   * @memberof Actions
+   */
   public async createNewContaier (docker: Dockerode, config: Dockerode.ContainerCreateOptions): Promise<Dockerode.Container> {
     try {
       const newContainer = await docker.createContainer(config)
@@ -216,6 +297,14 @@ export default new class Actions {
     }
   }
 
+  /**
+   * Remove an Image
+   *
+   * @param {Dockerode} docker Dockerode Instance
+   * @param {string} imageName Image Name
+   * @returns {Promise<string[]>}
+   * @memberof Actions
+   */
   public async removeImage (docker: Dockerode, imageName: string): Promise<string[]> {
     const message = []
 
@@ -231,6 +320,14 @@ export default new class Actions {
     }
   }
 
+  /**
+   * Pull a new Image
+   *
+   * @param {Dockerode} docker Dockerode Image
+   * @param {string} imageName Image Name
+   * @returns {Promise<Dockerode.Image>}
+   * @memberof Actions
+   */
   public async pullImage (docker: Dockerode, imageName: string): Promise<Dockerode.Image> {
     // let message = ''
     // let json
@@ -262,4 +359,6 @@ export default new class Actions {
       })
     })
   }
-}()
+}
+
+export default new Actions()
